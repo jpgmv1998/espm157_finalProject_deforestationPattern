@@ -1,12 +1,8 @@
 
-*add travis-ci badge here*
+[![Build Status](https://travis-ci.com/espm-157/final-project-individual-option-jpgmv1998.svg?token=v9vvAvr9EyLQT4354FTW&branch=master)](https://travis-ci.com/espm-157/final-project-individual-option-jpgmv1998)
+## Team Member:
 
-## Team Members:
-
-- full name, github handle
-- full name, github handle
-
-This repository is a template for your team's repository.
+- Joao Pedro Vieira, @jpgmv1998 [Individual option]
 
 ## assignment
 
