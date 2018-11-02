@@ -55,6 +55,7 @@ Shapefile with the Legal Amazon Limits. Legal Amazon is geopoltical division of 
 <br>
 
 **Fig. 4 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)**
+<br>
 ![](./images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
 
 <br> 
