@@ -7,7 +7,7 @@
 
 ### Description
 
-  Following Rosa et al. (2012) and Assuncao et al. (2017), I am going to analyze how the deforestation pattern changed through 2000-2014, comparing two primary type of clearings: small-scale (less than 25 ha) and large-scale (more than 25 ha). In 2004, the Brazilian Government implemented a satellite-based system that provides near-real-time alerts of deforestation (DETER) to inform law enforcement operations against illegal deforestation of tropical forest in the Amazon. However, this system can only detect clearings of a contiguous area bigger than 25 ha, so patches below this threshold are invisible to DETER and this information is public. Thus, the hypothesis is that DETER created an incentive to deforesters strategically adapt their behavior to deforest in small patches.
+  Following Rosa et al. (2012) and Assunção et al. (2017), I am going to analyze how the deforestation pattern changed through 2000-2014, comparing two primary type of clearings: small-scale (less than 25 ha) and large-scale (more than 25 ha). In 2004, the Brazilian Government implemented a satellite-based system that provides near-real-time alerts of deforestation (DETER) to inform law enforcement operations against illegal deforestation of tropical forest in the Amazon. However, this system can only detect clearings of a contiguous area bigger than 25 ha, so patches below this threshold are invisible to DETER and this information is public. Thus, the hypothesis is that DETER created an incentive to deforesters strategically adapt their behavior to deforest in small patches.
 
 ### Data
 
@@ -36,13 +36,13 @@ Shapefile with the Legal Amazon Limits. Legal Amazon is geopoltical division of 
 
 <br>
 
-**Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assuncao et al., 2017)**
+**Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)**
 ![](./images/deforestation_increment_sizes.png)
 
 <br>
 <br>
 
-**Fig. 2 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assuncao et al., 2017)**
+**Fig. 2 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assunção et al., 2017)**
 ![](./images/deforestation_percentage_byState_byYear_bySize.png)
 
 <br>
