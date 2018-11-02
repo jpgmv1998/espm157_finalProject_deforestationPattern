@@ -11,7 +11,7 @@
 
 ### Data
 
-1. Deforestation polygons - Source: INPE <http://www.dpi.inpe.br/prodesdigital/dadosn/2014>
+1. Deforestation polygons - Source: INPE (<http://www.dpi.inpe.br/prodesdigital/dadosn/2014>)
 
 It contains the annual deforestation series of the Brazilian Amazon. Multiple shapefiles, one for each Landsat mosaic scene in each year.
 
@@ -22,40 +22,40 @@ Relevant information: year of deforestation, spatial location and polygon catego
 
 CRS: LongLat (coordinate system), SAD69_pre96_BRonly (datum), not projected 
 
-2. Brazilian Municipalities Boundaries (2015) - Source: IBGE <ftp://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2015/Brasil/BR/br_municipios.zip>
+2. Brazilian Municipalities Boundaries (2015) - Source: IBGE (<ftp://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2015/Brasil/BR/br_municipios.zip>)
 
 Contains a shapefile with municipal perimeter for full Brazilian extension with 2015 as the year of reference (most recent).
 
 CRS: SIRGAS 2000 longlat (not projected)
 
-3. Legal Amazon (*Amazonia Legal*) Perimeter Shapefile - Source: INPE <http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip>
+3. Legal Amazon (*Amazonia Legal*) Perimeter Shapefile - Source: INPE (<http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip>)
 
-Shapefile with the Legal Amazon Limits. Legal Amazon is geopoltical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: <https://en.wikipedia.org/wiki/Legal_Amazon>
+Shapefile with the Legal Amazon Limits. Legal Amazon is geopoltical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: (<https://en.wikipedia.org/wiki/Legal_Amazon>)
 
 ### Inspirational Graphics
 
 <br>
 
-
-![**Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assuncao et al., 2017)**](./images/deforestation_increment_sizes.png)
-
-<br>
-<br>
-
-
-![**Fig. 2 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assuncao et al., 2017)**](./images/deforestation_percentage_byState_byYear_bySize.png)
+**Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assuncao et al., 2017)**
+![](./images/deforestation_increment_sizes.png)
 
 <br>
 <br>
 
-
-![**Fig. 3 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)**](./images/deforestation_map_bySize_rosa_et_al_2012.png)
+**Fig. 2 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assuncao et al., 2017)**
+![](./images/deforestation_percentage_byState_byYear_bySize.png)
 
 <br>
 <br>
 
+**Fig. 3 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)**
+![](./images/deforestation_map_bySize_rosa_et_al_2012.png)
 
-![**Fig. 4 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)**](./images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
+<br>
+<br>
+
+**Fig. 4 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)**
+![](./images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
 
 <br> 
 
@@ -93,8 +93,8 @@ Shapefile with the Legal Amazon Limits. Legal Amazon is geopoltical division of 
 
 ### References
 
-Assunção, Juliano, Clarissa Gandour, Pedro Pessoa, and Romero Rocha. "Property-level assessment of change in forest clearing patterns: The need for tailoring policy in the Amazon." Land Use Policy 66 (2017): 18-27.<https://doi.org/10.1016/j.landusepol.2017.04.022>
+Assunção, Juliano, Clarissa Gandour, Pedro Pessoa, and Romero Rocha. "Property-level assessment of change in forest clearing patterns: The need for tailoring policy in the Amazon." Land Use Policy 66 (2017): 18-27.(<https://doi.org/10.1016/j.landusepol.2017.04.022>)
 
-Rosa, Isabel MD, Carlos Souza Jr, and Robert M. Ewers. "Changes in size of deforested patches in the Brazilian Amazon." Conservation Biology 26, no. 5 (2012): 932-937.<https://doi.org/10.1111/j.1523-1739.2012.01901.x>
+Rosa, Isabel MD, Carlos Souza Jr, and Robert M. Ewers. "Changes in size of deforested patches in the Brazilian Amazon." Conservation Biology 26, no. 5 (2012): 932-937.(<https://doi.org/10.1111/j.1523-1739.2012.01901.x>)
 
 
