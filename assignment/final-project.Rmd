@@ -16,7 +16,7 @@ knitr::opts_chunk$set(cache = FALSE)
 library(tidyverse)    # to manipulate data 
 library(sf)           # to work with simple features data
 library(XML)          # XML for HTML processing
-library(utils)  # for 'unzip' function
+library(utils)        # for 'unzip' function
 
 ``` 
 
