@@ -106,7 +106,7 @@ raw_data_dir <- "data_input"
   }
     
     
-  UnzipMultipleFolders(fctn.zip.dir      = raw_data_dir,                  # unzips downloaded data and deletes original compressed files
+  UnzipMultipleFolders(fctn.zip.dir      = raw_data_dir,    # unzips downloaded data and deletes original compressed files
                        fctn.zip.pattern  = ".zip",
                        fctn.unzip.subdir = T)
 
