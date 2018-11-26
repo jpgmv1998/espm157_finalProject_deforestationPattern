@@ -13,7 +13,6 @@ knitr::opts_chunk$set(cache = FALSE)
 
 ### Loading Libraries
 ```{r libraries, include= TRUE, message = F}
-library(raster)       # to work with raster data
 library(tidyverse)    # to manipulate data 
 library(sf)           # to work with simple features data
 library(XML)          # XML for HTML processing
