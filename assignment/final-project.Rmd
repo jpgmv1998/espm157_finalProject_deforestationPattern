@@ -120,13 +120,13 @@ raw_data_dir <- "data_input"
 
 }
 
+
 ```
 
 Reading the data, extracting essential information and merging multiple input files into one object
 ```{r}
 # data_input has a similar strucuture for all folders, for each mosaic scene there is a "PDigital2014_d{5}_shp" folder, >
 # inside it there is a `2014` folder and then multiple spatial files with the same "PDigital2014_d{5}_pol" layer name pattern
-getwd()
 
 folder_name  <- list.files("data_input") # create a list with all mosaic scene folders
 
@@ -153,7 +153,7 @@ summary(def_merged)
 
 Project, calculate area, create id, translate and clean data
 ```{r}
-test <-
+def_clean <-
   def_merged %>% 
   st_transform("+proj=aea +lat_1=-2 +lat_2=-22 +lat_0=-12 +lon_0=-54 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs") %>%  # projecting to "SIRGAS2000albers"
   mutate(area = unclass(st_area(def_merged)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
@@ -163,7 +163,7 @@ test <-
   rename(state_uf = uf, prodes_class = mainclass, prodes_year_increment = ano) %>% 
   select(polyg_id, state_uf, prodes_class, prodes_year_increment, area)
 
-summary(test)  
+save(def_clean, file = "data_clean/def_clean.Rdata")  
 ```
 
 
