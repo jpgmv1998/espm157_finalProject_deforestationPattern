@@ -4,4 +4,4 @@
 .Ruserdata
 .Rbuildignore
 *.Rproj
-data_input
+data_*
