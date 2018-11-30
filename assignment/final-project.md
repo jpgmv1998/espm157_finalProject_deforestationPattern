@@ -123,7 +123,7 @@ if (!dir.exists(paths = clean_data_dir)) { # check existence of "data_clean" fol
 }
 
 
-if (list.files(clean_data_dir) != "def_clean.Rdata") { # check if def_clean.Rdata already exists locally
+if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clean.Rdata already exists locally
 
   folder_name  <- list.files(raw_data_dir) # create a list with all mosaic scene folders
   
@@ -150,7 +150,12 @@ if (list.files(clean_data_dir) != "def_clean.Rdata") { # check if def_clean.Rdat
   
   rm(mosaic_scene)
   
+  def_clean_df <- # create a version of the clean data with only data.frame information to have a light version of the data
+    def_clean %>% 
+    st_set_geometry(NULL)
+  
   save(def_clean, file = file.path(clean_data_dir, "def_clean.Rdata"))  
+  save(def_clean_df, file = file.path(clean_data_dir, "def_clean_df.Rdata"))  
 
 }
 ```
@@ -158,20 +163,63 @@ if (list.files(clean_data_dir) != "def_clean.Rdata") { # check if def_clean.Rdat
 Load clean data
 
 ``` r
-#load(file.path(clean_data_dir, "def_clean.Rdata"))
+load(file.path(clean_data_dir, "def_clean_df.Rdata"))
 
-#summary(def_clean)
-
-
-#def_clean %>% 
- # filter(prodes_year_increment == 2014) %>% 
-  #ggplot() +
-  #geom_histogram(aes(x = area))
-
-#def_clean %>% 
- # filter(prodes_year_increment == 2014) %>% 
-  #ggplot() +
-  #geom_sf(aes(fill = state_uf))
+summary(def_clean_df)
 ```
 
-Load auxiliary data (build state borders legal amazon)
+    ##    polyg_id            state_uf      prodes_class      
+    ##  Length:1508648     PA     :625821   Length:1508648    
+    ##  Class :character   MT     :225828   Class :character  
+    ##  Mode  :character   RO     :199107   Mode  :character  
+    ##                     AM     :137924                     
+    ##                     AC     :129956                     
+    ##                     MA     :108158                     
+    ##                     (Other): 81854                     
+    ##  prodes_year_increment      area         
+    ##  Min.   :1997          Min.   :    0.00  
+    ##  1st Qu.:2001          1st Qu.:    2.88  
+    ##  Median :2003          Median :    7.57  
+    ##  Mean   :2004          Mean   :   49.27  
+    ##  3rd Qu.:2008          3rd Qu.:   15.68  
+    ##  Max.   :2014          Max.   :76838.06  
+    ## 
+
+``` r
+def_clean_df %>% 
+  filter(area < 50, prodes_year_increment > 2002, prodes_year_increment < 2010) %>% 
+  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
+  ggplot(aes(x = area)) +
+  geom_histogram( bins = 30, stat = "density") +
+  facet_grid(. ~ prodes_year_increment)
+```
+
+    ## Warning: Ignoring unknown parameters: binwidth, bins, pad
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-4-1.png)
+
+``` r
+def_clean_df %>% 
+  group_by(prodes_year_increment) %>% 
+  filter(prodes_year_increment >= 2001) %>% 
+  mutate(size = ifelse(area < 25, "small", "large")) %>% 
+  group_by(state_uf, prodes_year_increment, size) %>% 
+  summarise(area_bysize = sum(area)) %>% 
+  spread(key = size, value = area_bysize) %>% 
+  replace_na(list(large = 0, small = 0)) %>% 
+  rename(def_large = large, def_small = small) %>% 
+  mutate(def_total = def_large + def_small) %>% 
+  group_by(prodes_year_increment) %>% 
+  summarise(sum_def_large = sum(def_large, na.rm = T)/10000, sum_def_small = sum(def_small, na.rm = T)/10000) %>% 
+  gather(key = "size", value = "def", -prodes_year_increment) %>% 
+  
+ggplot(aes(x = prodes_year_increment, y = def, fill = size)) +
+  geom_area() +
+  scale_fill_manual(name = "Polygon Size", labels = c("Large (>25ha)", "Small (<25ha)"), values = c("coral1", "lightblue")) +
+  ylab("Deforestation Increment (10,000 ha)") +
+  xlab("Year") +
+  ggtitle("Deforestation Trends by Polygon Size") +
+  scale_x_continuous(breaks = c(2001:2014))
+```
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-5-1.png)
