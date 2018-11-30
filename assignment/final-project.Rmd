@@ -152,7 +152,7 @@ if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clea
     reduce(rbind) %>% # merging all sf objects into a single one
     
     st_transform(crs_SIRGAS2000albers) %>%  # projecting to "SIRGAS2000albers"
-    mutate(area = unclass(st_area(def_merged)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
+    mutate(area = unclass(st_area(def_clean)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
     mutate(polyg_id = paste(pathrow, linkcolumn, sep = "_")) %>% # create id column
     mutate(mainclass = as.character(mainclass)) %>% # transform column class from factor to character
     mutate(mainclass = replace(mainclass, mainclass == "DESFLORESTAMENTO", "DEFORESTATION")) %>% # translate mainclass
