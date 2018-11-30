@@ -112,19 +112,19 @@ Rosa, Isabel MD, Carlos Souza Jr, and Robert M. Ewers. "Changes in size of defor
 
 ### and at least three of the following skills (this list may be modified/extended):
 
-- Use of at least 5 `dplyr` verbs / functions
-- Writing / working with custom R functions
+- **Use of at least 5 `dplyr` verbs / functions**
+- **Writing / working with custom R functions**
 - Creating an R package for functions used in the analysis
 - Interaction with an API
-- Use of regular expressions
+- **Use of regular expressions**
 - Use of an external relational database
 - Preparing processed data for archiving / publication
 - Parsing extensible data formats (JSON, XML)
-- Use of spatial vector data (`sf` package) and visualization of spatial data
+- **Use of spatial vector data (`sf` package) and visualization of spatial data**
 - Creation of an R package
-- Expansion of ggplot functions (to include more than default characteristics)
-- Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentaiton
-- use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)
+- **Expansion of ggplot functions (to include more than default characteristics)**
+- **Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentaiton**
+- **use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)**
 
 # Final Rubric 30 pts total
 
