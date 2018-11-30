@@ -101,7 +101,7 @@ raw_data_dir <- "data_input"
     
     dest_path <- file.path(raw_data_dir, html_matched)
     
-    map2(raw_data_url_zipfiles[1], dest_path[1], function(x,y) download.file(x,y))  # name determined in 'html_matched'
+    map2(raw_data_url_zipfiles, dest_path, function(x,y) download.file(x,y))  # name determined in 'html_matched'
     
     
     UnzipMultipleFolders(zip.dir      = raw_data_dir,    # unzips downloaded data and deletes original compressed files
@@ -223,3 +223,5 @@ ggplot(aes(x = prodes_year_increment, y = def, fill = size)) +
 ```
 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-5-1.png)
+
+Plot of proportion of small polygons through time by state.
