@@ -12,4 +12,4 @@ before_install:
   - sudo apt-get install --yes libudunits2-dev libproj-dev libgeos-dev libgdal-dev
 
 script: 
-  -  travis_wait 30 R -f tests/render_rmds.R
+  -  travis_wait 50 R -f tests/render_rmds.R
