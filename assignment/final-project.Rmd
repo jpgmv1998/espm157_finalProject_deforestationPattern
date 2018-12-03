@@ -123,7 +123,7 @@ raw_data_dir <- "data_input"
 
 ```
 
-## Cleaning Data
+### Data Cleaning
 ```{r}
 
 clean_data_dir <- "data_clean"
