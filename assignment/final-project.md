@@ -111,8 +111,7 @@ raw_data_dir <- "data_input"
 }
 ```
 
-Cleaning Data
--------------
+### Data Cleaning
 
 ``` r
 clean_data_dir <- "data_clean"
@@ -187,19 +186,6 @@ summary(def_clean_df)
 
 ``` r
 def_clean_df %>% 
-  filter(area < 50, prodes_year_increment > 2002, prodes_year_increment < 2010) %>% 
-  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
-  ggplot(aes(x = area)) +
-  geom_histogram( bins = 30, stat = "density") +
-  facet_grid(. ~ prodes_year_increment)
-```
-
-    ## Warning: Ignoring unknown parameters: binwidth, bins, pad
-
-![](final-project_files/figure-markdown_github/unnamed-chunk-4-1.png)
-
-``` r
-def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2001) %>% 
   mutate(size = ifelse(area < 25, "small", "large")) %>% 
@@ -219,9 +205,65 @@ ggplot(aes(x = prodes_year_increment, y = def, fill = size)) +
   ylab("Deforestation Increment (10,000 ha)") +
   xlab("Year") +
   ggtitle("Deforestation Trends by Polygon Size") +
-  scale_x_continuous(breaks = c(2001:2014))
+  scale_x_continuous(breaks = c(2001:2014), expand = c(0, 0), limits = c(2001, 2014.2)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
 ```
 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
+Histogram
+
+``` r
+def_clean_df %>% 
+  filter(area <= 30, area >= 20, prodes_year_increment > 2000) %>% 
+  mutate(size = ifelse(area < 25, "small", "large")) %>% 
+  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
+  ggplot(aes(x = area, fill = size)) +
+  geom_bar( stat = "density") +
+  facet_wrap(. ~ prodes_year_increment, ncol = 4)
+```
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-6-1.png)
+
 Plot of proportion of small polygons through time by state.
+
+``` r
+def_clean_df %>% 
+  group_by(prodes_year_increment) %>% 
+  filter(prodes_year_increment >= 2001) %>% 
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  group_by(state_uf, prodes_year_increment, size) %>% 
+  summarise(area_bysize = sum(area)) %>% 
+  ungroup() %>% 
+  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
+  #mutate(size = factor(size, levels = c("<25 ha", "25-100 ha", "100-500 ha", "> 500 ha"))) %>% 
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+  #spread(key = size, value = area_bysize) %>% 
+  #replace_na(list(`<25 ha` = 0, `> 500 ha` = 0, `100-500 ha` = 0, `25-100 ha` = 0)) %>% 
+  #mutate(def_total = `<25 ha` + `> 500 ha` + `100-500 ha` + `25-100 ha`) %>% 
+  #mutate(`<25 ha` = `<25 ha`/def_total) %>% 
+  #mutate(`25-100 ha` = `25-100 ha`/def_total) %>% 
+  #mutate(`100-500 ha` = `100-500 ha`/def_total) %>% 
+  #mutate(`> 500 ha` = `> 500 ha`/def_total) %>% 
+ 
+
+ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
+  geom_bar(aes(fill = size), stat = "identity", position = "fill") +
+  #scale_fill_manual(name = "Polygon Size", labels = c("Large (>25ha)", "Small (<25ha)"), values = c("coral1", "lightblue")) +
+  ylab("Share Polygon Size") +
+  xlab("Year") +
+  ggtitle("Polygons Trends by State and Cleared Patch Size") +
+  scale_x_discrete(breaks = c(2001:2014), expand = c(0,0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  facet_wrap(. ~ state_uf, ncol = 2, scales = "free") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom", strip.background = element_rect(fill=NA) 
+)
+```
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-7-1.png)
