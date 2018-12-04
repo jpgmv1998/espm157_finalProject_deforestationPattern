@@ -85,8 +85,11 @@ raw_data_dir <- "data_input"
     dir.create(path  = raw_data_dir)
     print(paste0("***NOTE: directory ", raw_data_dir, " created."))
   }
-  
-  
+```
+
+    ## [1] "***NOTE: directory data_input created."
+
+``` r
   if (length(list.files(raw_data_dir)) == 0) {
   
     html_matched  <- 
@@ -120,8 +123,11 @@ if (!dir.exists(paths = clean_data_dir)) { # check existence of "data_clean" fol
   dir.create(path  = clean_data_dir)
   print(paste0("***NOTE: directory ", clean_data_dir, " created."))
 }
+```
 
+    ## [1] "***NOTE: directory data_clean created."
 
+``` r
 if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clean.Rdata already exists locally
 
   folder_name  <- list.files(raw_data_dir) # create a list with all mosaic scene folders
@@ -181,7 +187,7 @@ summary(def_clean_df)
     ##  Median :2003          Median :    7.57  
     ##  Mean   :2004          Mean   :   49.27  
     ##  3rd Qu.:2008          3rd Qu.:   15.68  
-    ##  Max.   :2014          Max.   :76838.06  
+    ##  Max.   :2014          Max.   :76837.39  
     ## 
 
 ``` r
