@@ -27,6 +27,9 @@ CRS: LongLat (coordinate system), SAD69_pre96_BRonly (datum), not projected
 
 Shapefile with the Legal Amazon Limits and the State Boundaries. Legal Amazon is geopoltical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: (<https://en.wikipedia.org/wiki/Legal_Amazon>)
 
+CRS: LongLat (coordinate system), WGS84 (datum), not projected 
+
+
 ### Inspirational Graphics
 
 <br>
