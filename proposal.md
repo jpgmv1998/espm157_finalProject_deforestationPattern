@@ -84,7 +84,7 @@ CRS: LongLat (coordinate system), WGS84 (datum), not projected
 - **Writing / working with custom R functions**
 - Creating an R package for functions used in the analysis
 - Interaction with an API
-- **Use of regular expressions**
+- Use of regular expressions
 - Use of an external relational database
 - Preparing processed data for archiving / publication
 - Parsing extensible data formats (JSON, XML)
