@@ -6,7 +6,7 @@ November 25, 2018
 ### Loading Libraries
 
 ``` r
-library(tidyverse)    # to manipulate data 
+library(tidyverse)    # to manipulate data
 library(sf)           # to work with simple features data
 library(XML)          # XML for HTML processing
 library(utils)        # for 'unzip' function
@@ -20,33 +20,30 @@ library(gridExtra)    # for organizing multiple plots
 UnzipMultipleFolders <- function(zip.dir,
                                  zip.pattern  = ".zip",
                                  unzip.subdir = T) {
-  
-    # UNZIPS FOLDERS IN GIVEN DIRECTORY & SUBDIRECTORIES AND DELETES COMPRESSED FOLDERS
+    # UNZIPS FOLDERS IN GIVEN DIRECTORY & > 
+    # SUBDIRECTORIES AND DELETES COMPRESSED FOLDERS
     #
     # ARGS
     #   zip.dir:      parent directory containing zip files
     #   zip.pattern:  zipped file extension
-    #   unzip.subdir: if TRUE, looks for 'zip.pattern' subdirs in 'zip.dir' (but does not find nested compressed dirs - 'while' loop in >
-    #                      function addresses this)
+    #   unzip.subdir: if TRUE, looks for 'zip.pattern' subdirs in 'zip.dir' >
+    #                 (but does not find nested compressed dirs - 'while' loop in >
+    #                 function addresses this)
     #
     # RETURN
-    #   unzipped folders in equivalent directory structure
-  
-  
-  
+    # unzipped folders in equivalent directory structure
   
       # zipped folder identification 
       zip_list <- list.files(path       = zip.dir,
                              pattern    = zip.pattern,
                              recursive  = T,
                              full.names = T)
-    
-    
+  
       # unzip procedure
       while (length(zip_list) > 0) {                          # 'while' to enable recursive unzip
-        for (zip_folder in zip_list) {
-          unzip_dir <- str_replace(pattern     = zip.pattern,   # sets unzipped dir structure to mirror original zipped dir structure
-                                   replacement = "",
+      for (zip_folder in zip_list) {
+          unzip_dir <- str_replace(pattern     = zip.pattern,   # sets unzipped dir structure to mirror >
+                                   replacement = "",            # original zipped dir structure
                                    string      = zip_folder)
           
           unzip(zipfile   = zip_folder,                       # unzips folders
@@ -56,8 +53,8 @@ UnzipMultipleFolders <- function(zip.dir,
   
     map(zip_list, unlink)  # deletes zip files
   
-    zip_list <- list.files(path       = zip.dir,       # 'zip.list' updated to check existence of remaining zip dirs in recently unzipped dirs
-                           pattern    = zip.pattern,
+    zip_list <- list.files(path       = zip.dir,       # 'zip.list' updated to check existence of > 
+                           pattern    = zip.pattern,   # remaining zip dirs in recently unzipped dirs
                            recursive  = unzip.subdir,
                            full.names = T)
     }
@@ -401,7 +398,7 @@ ggplot() +
         strip.background = element_rect(fill = NA),
         axis.line = element_blank(), axis.ticks = element_blank(), 
         axis.title = element_blank(), axis.text = element_blank(), 
-        legend.position = "bottom")
+        legend.position = "bottom", legend.key.width = unit(4, "cm"))
 ```
 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-11-1.png)
@@ -430,35 +427,38 @@ ggplot() +
         strip.background = element_rect(fill = NA),
         axis.line = element_blank(), axis.ticks = element_blank(), 
         axis.title = element_blank(), axis.text = element_blank(),
-        legend.position = "bottom")
+        legend.position = "bottom", legend.key.width = unit(4, "cm"))
 ```
 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
-### Spatial Distribution of deforestation by cleared patch size across time (2002-2014)
+### Spatial Distribution of deforestation by cleared patch size across time (2002-2014) - create function to just change the start and end year
 
-**Fig. 4 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)** ![](../images/deforestation_map_bySize_rosa_et_al_2012.png)
+**Fig. 4 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)**
+
+![](../images/deforestation_map_bySize_rosa_et_al_2012.png)
 
 ``` r
-def_clean %>% 
-  filter(prodes_year_increment == 2010 | prodes_year_increment == 2012) %>% 
+map_1 <-
+  def_clean %>% 
+  filter(prodes_year_increment >= 2002 & prodes_year_increment <= 2004) %>% 
   mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
   mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
   mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
   mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
-  group_by(state_uf, prodes_year_increment, size) %>% 
+  group_by(state_uf, size) %>% 
   st_union(by_feature = T) %>% 
   ungroup() %>% 
-  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
   mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+  filter(state_uf == "AC") %>% 
   
 ggplot() +
   
-  geom_sf(aes(col = size, fill = size), size = 2) +
+  geom_sf(aes(col = size, fill = size), size = 1.5) +
   
   geom_sf(data = la_clean, fill = NA) +
   
-  facet_wrap(. ~ prodes_year_increment, ncol = 1) +
+  ggtitle("Distribution of deforested patches by size (2002-2004") +
   
    theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
@@ -467,6 +467,70 @@ ggplot() +
         axis.line = element_blank(), axis.ticks = element_blank(), 
         axis.title = element_blank(), axis.text = element_blank(),
         legend.position = "bottom")
+
+map_2 <-
+  def_clean %>% 
+  filter(prodes_year_increment >= 2005 & prodes_year_increment <= 2009) %>% 
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  group_by(state_uf, size) %>% 
+  st_union(by_feature = T) %>% 
+  ungroup() %>% 
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+    filter(state_uf == "AC") %>% 
+
+  
+ggplot() +
+  
+  geom_sf(aes(col = size, fill = size), size = 1.5) +
+  
+  geom_sf(data = la_clean, fill = NA) +
+  
+  ggtitle("Distribution of deforested patches by size (2005-2009)") +
+
+  
+   theme(panel.grid.major = element_line(colour = "White"), 
+        panel.grid.minor = element_line(colour = "white"),
+        panel.background = element_blank(), 
+        strip.background = element_rect(fill = NA),
+        axis.line = element_blank(), axis.ticks = element_blank(), 
+        axis.title = element_blank(), axis.text = element_blank(),
+        legend.position = "bottom")
+
+map_3 <-
+  def_clean %>% 
+  filter(prodes_year_increment >= 2009) %>% 
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  group_by(state_uf, size) %>% 
+  st_union(by_feature = T) %>% 
+  ungroup() %>% 
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+    filter(state_uf == "AC") %>% 
+
+  
+ggplot() +
+  
+  geom_sf(aes(col = size, fill = size), size = 1.2) +
+  
+  geom_sf(data = la_clean, fill = NA) +
+  
+  ggtitle("Distribution of deforested patches by size (2009-2014)") +
+
+  
+   theme(panel.grid.major = element_line(colour = "White"), 
+        panel.grid.minor = element_line(colour = "white"),
+        panel.background = element_blank(), 
+        strip.background = element_rect(fill = NA),
+        axis.line = element_blank(), axis.ticks = element_blank(), 
+        axis.title = element_blank(), axis.text = element_blank(),
+        legend.position = "bottom")
+
+grid.arrange(map_1, map_2, map_3, ncol = 1)
 ```
 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-13-1.png)

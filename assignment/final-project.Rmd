@@ -13,7 +13,7 @@ knitr::opts_chunk$set(cache = FALSE, warning = F, message = F)
 
 ### Loading Libraries
 ```{r libraries, include= TRUE, message = F}
-library(tidyverse)    # to manipulate data 
+library(tidyverse)    # to manipulate data
 library(sf)           # to work with simple features data
 library(XML)          # XML for HTML processing
 library(utils)        # for 'unzip' function
@@ -27,44 +27,42 @@ library(gridExtra)    # for organizing multiple plots
 UnzipMultipleFolders <- function(zip.dir,
                                  zip.pattern  = ".zip",
                                  unzip.subdir = T) {
-  
-    # UNZIPS FOLDERS IN GIVEN DIRECTORY & SUBDIRECTORIES AND DELETES COMPRESSED FOLDERS
+    # UNZIPS FOLDERS IN GIVEN DIRECTORY & > 
+    # SUBDIRECTORIES AND DELETES COMPRESSED FOLDERS
     #
     # ARGS
     #   zip.dir:      parent directory containing zip files
     #   zip.pattern:  zipped file extension
-    #   unzip.subdir: if TRUE, looks for 'zip.pattern' subdirs in 'zip.dir' (but does not find nested compressed dirs - 'while' loop in >
-    #                      function addresses this)
+    #   unzip.subdir: if TRUE, looks for 'zip.pattern' subdirs in 'zip.dir' >
+    #                 (but does not find nested compressed dirs - >
+    #                  'while' loop in function addresses this)
     #
     # RETURN
-    #   unzipped folders in equivalent directory structure
-  
-  
-  
+    # unzipped folders in equivalent directory structure
   
       # zipped folder identification 
       zip_list <- list.files(path       = zip.dir,
                              pattern    = zip.pattern,
                              recursive  = T,
                              full.names = T)
-    
-    
+  
       # unzip procedure
-      while (length(zip_list) > 0) {                          # 'while' to enable recursive unzip
+      while (length(zip_list) > 0) {  # 'while' to enable recursive unzip
+        
         for (zip_folder in zip_list) {
-          unzip_dir <- str_replace(pattern     = zip.pattern,   # sets unzipped dir structure to mirror original zipped dir structure
-                                   replacement = "",
-                                   string      = zip_folder)
-          
-          unzip(zipfile   = zip_folder,                       # unzips folders
-                overwrite = T,
-                exdir     = unzip_dir)
-      }
+            unzip_dir <- str_replace(pattern     = zip.pattern,   # sets unzipped dir structure to mirror >
+                                     replacement = "",            # original zipped dir structure
+                                     string      = zip_folder)
+            
+            unzip(zipfile   = zip_folder,                       # unzips folders
+                  overwrite = T,
+                  exdir     = unzip_dir)
+        }
   
     map(zip_list, unlink)  # deletes zip files
   
-    zip_list <- list.files(path       = zip.dir,       # 'zip.list' updated to check existence of remaining zip dirs in recently unzipped dirs
-                           pattern    = zip.pattern,
+    zip_list <- list.files(path       = zip.dir,       # 'zip.list' updated to check existence of > 
+                           pattern    = zip.pattern,   # remaining zip dirs in recently unzipped dirs
                            recursive  = unzip.subdir,
                            full.names = T)
     }
@@ -238,7 +236,7 @@ load(file.path(clean_data_dir, "la_clean.Rdata"))
 ```
 
 
-### Deforestation by size of cleared patch trends
+### Deforestation Trends by size of cleared patch 
 
 Inspired by **Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)**
 ![](../images/deforestation_increment_sizes.png)
@@ -416,7 +414,7 @@ ggplot() +
         strip.background = element_rect(fill = NA),
         axis.line = element_blank(), axis.ticks = element_blank(), 
         axis.title = element_blank(), axis.text = element_blank(), 
-        legend.position = "bottom", legend.key.width = 3)
+        legend.position = "bottom", legend.key.width = unit(4, "cm"))
 
 ```
 
@@ -445,7 +443,7 @@ ggplot() +
         strip.background = element_rect(fill = NA),
         axis.line = element_blank(), axis.ticks = element_blank(), 
         axis.title = element_blank(), axis.text = element_blank(),
-        legend.position = "bottom", legend.key.width = 4)
+        legend.position = "bottom", legend.key.width = unit(4, "cm"))
 
 ```
 
@@ -468,10 +466,11 @@ map_1 <-
   st_union(by_feature = T) %>% 
   ungroup() %>% 
   mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+  filter(state_uf == "AC") %>% 
   
 ggplot() +
   
-  geom_sf(aes(col = size, fill = size), size = 2) +
+  geom_sf(aes(col = size, fill = size), size = 1.5) +
   
   geom_sf(data = la_clean, fill = NA) +
   
@@ -496,10 +495,12 @@ map_2 <-
   st_union(by_feature = T) %>% 
   ungroup() %>% 
   mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+    filter(state_uf == "AC") %>% 
+
   
 ggplot() +
   
-  geom_sf(aes(col = size, fill = size), size = 2) +
+  geom_sf(aes(col = size, fill = size), size = 1.5) +
   
   geom_sf(data = la_clean, fill = NA) +
   
@@ -525,10 +526,12 @@ map_3 <-
   st_union(by_feature = T) %>% 
   ungroup() %>% 
   mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+    filter(state_uf == "AC") %>% 
+
   
 ggplot() +
   
-  geom_sf(aes(col = size, fill = size), size = 2) +
+  geom_sf(aes(col = size, fill = size), size = 1.2) +
   
   geom_sf(data = la_clean, fill = NA) +
   
