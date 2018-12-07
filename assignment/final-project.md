@@ -27,8 +27,8 @@ UnzipMultipleFolders <- function(zip.dir,
     #   zip.dir:      parent directory containing zip files
     #   zip.pattern:  zipped file extension
     #   unzip.subdir: if TRUE, looks for 'zip.pattern' subdirs in 'zip.dir' >
-    #                 (but does not find nested compressed dirs - 'while' loop in >
-    #                 function addresses this)
+    #                 (but does not find nested compressed dirs - >
+    #                  'while' loop in function addresses this)
     #
     # RETURN
     # unzipped folders in equivalent directory structure
@@ -40,16 +40,17 @@ UnzipMultipleFolders <- function(zip.dir,
                              full.names = T)
   
       # unzip procedure
-      while (length(zip_list) > 0) {                          # 'while' to enable recursive unzip
-      for (zip_folder in zip_list) {
-          unzip_dir <- str_replace(pattern     = zip.pattern,   # sets unzipped dir structure to mirror >
-                                   replacement = "",            # original zipped dir structure
-                                   string      = zip_folder)
-          
-          unzip(zipfile   = zip_folder,                       # unzips folders
-                overwrite = T,
-                exdir     = unzip_dir)
-      }
+      while (length(zip_list) > 0) {  # 'while' to enable recursive unzip
+        
+        for (zip_folder in zip_list) {
+            unzip_dir <- str_replace(pattern     = zip.pattern,   # sets unzipped dir structure to mirror >
+                                     replacement = "",            # original zipped dir structure
+                                     string      = zip_folder)
+            
+            unzip(zipfile   = zip_folder,                       # unzips folders
+                  overwrite = T,
+                  exdir     = unzip_dir)
+        }
   
     map(zip_list, unlink)  # deletes zip files
   
@@ -220,7 +221,7 @@ load(file.path(clean_data_dir, "def_clean.Rdata"))
 load(file.path(clean_data_dir, "la_clean.Rdata"))
 ```
 
-### Deforestation by size of cleared patch trends
+### Deforestation Trends by size of cleared patch
 
 Inspired by **Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)** ![](../images/deforestation_increment_sizes.png)
 
@@ -390,7 +391,7 @@ ggplot() +
   
   geom_sf(aes(fill = share_def_small)) +
   facet_wrap(. ~ prodes_year_increment, ncol = 4) +
-  scale_fill_distiller(type = "seq", palette = "YlOrRd", name = "Share Small Polygon Deforestation") +
+  scale_fill_distiller(type = "seq", palette = "YlOrRd", direction = -1, name = "Share Small Polygon Deforestation") +
   
   theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
@@ -419,7 +420,7 @@ ggplot() +
   
   geom_sf(aes(fill = share_def)) +
   facet_wrap(. ~ prodes_year_increment, ncol = 4) +
-  scale_fill_distiller(type = "seq", palette = "YlOrRd", name = "Share of State Deforested Area") +
+  scale_fill_distiller(type = "seq", palette = "YlOrRd", direction = -1, name = "Share of State Deforested Area") +
   
   theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
@@ -454,7 +455,7 @@ map_1 <-
   
 ggplot() +
   
-  geom_sf(aes(col = size, fill = size), size = 1.5) +
+  geom_sf(aes(col = size, fill = size), size = 1.05) +
   
   geom_sf(data = la_clean, fill = NA) +
   
@@ -484,7 +485,7 @@ map_2 <-
   
 ggplot() +
   
-  geom_sf(aes(col = size, fill = size), size = 1.5) +
+  geom_sf(aes(col = size, fill = size), size = 1.05) +
   
   geom_sf(data = la_clean, fill = NA) +
   
@@ -515,7 +516,7 @@ map_3 <-
   
 ggplot() +
   
-  geom_sf(aes(col = size, fill = size), size = 1.2) +
+  geom_sf(aes(col = size, fill = size), size = 1.05) +
   
   geom_sf(data = la_clean, fill = NA) +
   
