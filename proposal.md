@@ -40,31 +40,32 @@ CRS: LongLat (coordinate system), WGS84 (datum), not projected
 <br>
 <br>
 
-**Fig. 2 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assunção et al., 2017)**
+**Fig. 2 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)**
+<br>
+![](./images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
+
+
+<br>
+<br>
+
+**Fig. 3 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assunção et al., 2017)**
 ![](./images/deforestation_percentage_byState_byYear_bySize.png)
 
 <br>
 <br>
 
-**Fig. 3 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)**
+**Fig. 4 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)**
 ![](./images/deforestation_map_bySize_rosa_et_al_2012.png)
-
-<br>
-<br>
-
-**Fig. 4 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)**
-<br>
-![](./images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
 
 <br> 
 
 ### Questions
 
-1) Analyze Deforestation Trends in the Brazilian Amazon by the size of cleared patch (2002-2014) - inspired by figures 1 and 4.
+1) Analyze Deforestation Trends in the Brazilian Amazon by the size of cleared patch (2002-2014) - inspired by figures 1 and 2.
 
-2) Analyze State Heterogeneity on Deforestation Trends in the Brazilian Amazon by the size of cleared patch (2002-2014) - inspired by figure 2.
+2) Analyze State Heterogeneity on Deforestation Trends in the Brazilian Amazon by the size of cleared patch (2002-2014) - inspired by figure 3.
 
-3) Analyze Spatial Distribution of the Deforestation by the size of cleared patch - inspired by figure 3.
+3) Analyze Spatial Distribution of the Deforestation by the size of cleared patch - inspired by figure 4.
 
 
 ### Project questions will illustrate all of the following tasks:
