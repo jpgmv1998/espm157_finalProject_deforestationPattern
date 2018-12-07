@@ -19,6 +19,7 @@ library(XML)          # XML for HTML processing
 library(utils)        # for 'unzip' function
 library(RColorBrewer) # for color palettes
 library(gridExtra)    # for organizing multiple plots
+library(stringr)      # for working with strings replacement
 ``` 
 
 ### Functions (create separate file and source it)
@@ -31,41 +32,43 @@ source("functions.R")
 
 ### Data Download
 
+```{r  if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
+# set url
+clean_data_url_index <- "https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/download/data/data_clean.zip"
+# set folder name
+folder_name <- "data_clean.zip"
+# download clean data
+download.file(url = clean_data_url_index, destfile = folder_name)
+# unzips folder
+unzip(zipfile   = folder_name, 
+      overwrite = T)
+# remove zip file
+unlink(folder_name)
+```
 
 #### Deforestation
-```{r}
+```{r if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
 # web address setup
 raw_data_url_index <- "http://www.dpi.inpe.br/prodesdigital/dadosn/2014/"
-
-
 # directory setup
 raw_data_dir <- "data_input" 
-
-# download of 2015 shapefile data
-  if (!dir.exists(paths = raw_data_dir)) { # check existence of "data_input" folder
+# download of 2014 shapefile data
+if (!dir.exists(paths = raw_data_dir)) { # check existence of "data_input" folder
     dir.create(path  = raw_data_dir)
     print(paste0("***NOTE: directory ", raw_data_dir, " created."))
-  }
+  } 
   
   
   if (length(list.files(raw_data_dir)) == 0) {
-  
-    html_matched  <- 
-      htmlParse(raw_data_url_index) %>%           # parses html string (splits into components)
-      getNodeSet("//a") %>%                       # finds nodes matching criterion "//a"
-      map(xmlGetAttr, "href") %>% 
-      grep(pattern = "*_shp.zip", value = T)      # selects elements matching "*_shp.zip" (returns landsat mosaic scenes)
-  
-    
+    html_matched <- htmlParse(raw_data_url_index) %>%  # parses html string (splits into components)
+    getNodeSet("//a") %>%  # finds nodes matching criterion "//a"
+    map(xmlGetAttr, "href") %>% 
+    grep(pattern = "*_shp.zip", value = T)  # selects elements matching "*_shp.zip" (returns landsat mosaic scenes)
     raw_data_url_zipfiles <- paste(raw_data_url_index, html_matched,
                                    sep = "")
-    
     dest_path <- file.path(raw_data_dir, html_matched)
-    
     map2(raw_data_url_zipfiles, dest_path, function(x,y) download.file(x,y))  # name determined in 'html_matched'
-    
-    
-    UnzipMultipleFolders(zip.dir      = raw_data_dir,    # unzips downloaded data and deletes original compressed files
+    UnzipMultipleFolders(zip.dir      = raw_data_dir,  # unzips downloaded data and deletes original compressed files
                          zip.pattern  = ".zip",
                          unzip.subdir = T)
 
@@ -74,15 +77,13 @@ raw_data_dir <- "data_input"
 
 ```
 
+
 #### Legal Aamazon - State Boundaries
 
-```{r}
+```{r if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
 if (!file.exists(file.path(raw_data_dir, "UF_AmLeg_LLwgs84"))) { # only download data if there is not a local copy
-  
   raw_data_url_index_2 <- "http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip" # set url 
-  
   download.file(url = raw_data_url_index_2, destfile = "data_input/UF_AmLeg_LLwgs84.zip") # download the shapefile
-  
   UnzipMultipleFolders(zip.dir      = raw_data_dir,    # unzips downloaded data and deletes original compressed files
                        zip.pattern  = ".zip",
                        unzip.subdir = T)
@@ -93,10 +94,7 @@ if (!file.exists(file.path(raw_data_dir, "UF_AmLeg_LLwgs84"))) { # only download
 ### Data Cleaning
 
 #### Deforestation
-```{r}
-
-clean_data_dir <- "data_clean"
-
+```{r if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
 if (!dir.exists(paths = clean_data_dir)) { # check existence of "data_clean" folder
   dir.create(path  = clean_data_dir)
   print(paste0("***NOTE: directory ", clean_data_dir, " created."))
@@ -106,20 +104,15 @@ if (!dir.exists(paths = clean_data_dir)) { # check existence of "data_clean" fol
 if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clean.Rdata already exists locally
 
   folder_name  <- list.files(raw_data_dir, pattern = "_shp") # create a list with all mosaic scene folders
-  
   layer_name <- str_replace(pattern = "_shp", replacement = "__pol", string = folder_name) # layer name is very similar to the folder name
-  
   complete_path <- file.path(raw_data_dir, folder_name, "2014")
-  
   mosaic_scene <- 
     map2(.x = complete_path, .y = layer_name, .f = st_read, quiet = T) 
-    
   def_clean <-
     mosaic_scene %>% 
     map(st_set_crs, crs_SAD69longlatPre96BR) %>% # some scenes are missing the proj4string, so we set it based on documentation and existing proj4string 
     map(filter, mainclass == "DESFLORESTAMENTO") %>% # extracting deforestation data
     reduce(rbind) %>% # merging all sf objects into a single one
-    
     st_transform(crs_SIRGAS2000albers) %>%  # projecting to "SIRGAS2000albers"
     mutate(area = unclass(st_area(.)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
     mutate(polyg_id = paste(pathrow, linkcolumn, sep = "_")) %>% # create id column
@@ -129,7 +122,6 @@ if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clea
     select(polyg_id, state_uf, prodes_class, prodes_year_increment, area) # keep column of interest
   
   rm(mosaic_scene)
-  
   def_clean_df <- # create a version of the clean data with only data.frame information to have a light version of the data
     def_clean %>% 
     st_set_geometry(NULL)
@@ -140,10 +132,9 @@ if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clea
 }
 ```
 
+
 #### Legal Aamazon - State Boundaries
-```{r}
-
-
+```{r if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
 if (!any(list.files(clean_data_dir) == "la_clean.Rdata")) { # check if def_clean.Rdata already exists locally
 
   folder_name  <- list.files(raw_data_dir, pattern = "AmLeg") # create a list with the Legal Amazon folder
@@ -178,11 +169,11 @@ if (!any(list.files(clean_data_dir) == "la_clean.Rdata")) { # check if def_clean
 
 ### Load clean data
 ```{r}
-load(file.path(clean_data_dir, "def_clean_df.Rdata"))
+load("data_clean/def_clean_df.Rdata")
 
-load(file.path(clean_data_dir, "def_clean.Rdata"))
+load("data_clean/def_clean.Rdata")
 
-load(file.path(clean_data_dir, "la_clean.Rdata"))
+load("data_clean/la_clean.Rdata")
 
 ```
 
@@ -418,15 +409,10 @@ map_1 <-
   ungroup() %>% 
   mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
   filter(state_uf == "AC") %>% 
-  
-ggplot() +
-  
+  ggplot() +
   geom_sf(aes(col = size, fill = size), size = 1.05) +
-  
   geom_sf(data = la_clean, fill = NA) +
-  
-  ggtitle("Distribution of deforested patches by size (2002-2004") +
-  
+  ggtitle("Distribution of deforested patches by size (2002-2004)") +
    theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
         panel.background = element_blank(), 
@@ -446,19 +432,12 @@ map_2 <-
   st_union(by_feature = T) %>% 
   ungroup() %>% 
   mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
-    filter(state_uf == "AC") %>% 
-
-  
-ggplot() +
-  
+  filter(state_uf == "AC") %>%
+  ggplot() +
   geom_sf(aes(col = size, fill = size), size = 1.05) +
-  
   geom_sf(data = la_clean, fill = NA) +
-  
   ggtitle("Distribution of deforested patches by size (2005-2009)") +
-
-  
-   theme(panel.grid.major = element_line(colour = "White"), 
+  theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
         panel.background = element_blank(), 
         strip.background = element_rect(fill = NA),
@@ -466,30 +445,25 @@ ggplot() +
         axis.title = element_blank(), axis.text = element_blank(),
         legend.position = "bottom")
 
+
 map_3 <-
   def_clean %>% 
   filter(prodes_year_increment >= 2009) %>% 
   mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
   mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>%
   mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
   group_by(state_uf, size) %>% 
   st_union(by_feature = T) %>% 
   ungroup() %>% 
   mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
-    filter(state_uf == "AC") %>% 
+  filter(state_uf == "AC") %>% 
 
-  
 ggplot() +
-  
   geom_sf(aes(col = size, fill = size), size = 1.05) +
-  
   geom_sf(data = la_clean, fill = NA) +
-  
   ggtitle("Distribution of deforested patches by size (2009-2014)") +
-
-  
-   theme(panel.grid.major = element_line(colour = "White"), 
+  theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
         panel.background = element_blank(), 
         strip.background = element_rect(fill = NA),
@@ -498,7 +472,6 @@ ggplot() +
         legend.position = "bottom")
 
 grid.arrange(map_1, map_2, map_3, ncol = 1)
-
 ```
 
 
