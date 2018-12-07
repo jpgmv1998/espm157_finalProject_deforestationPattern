@@ -11,6 +11,7 @@ library(sf)           # to work with simple features data
 library(XML)          # XML for HTML processing
 library(utils)        # for 'unzip' function
 library(RColorBrewer) # for color palettes
+library(gridExtra)    # for organizing multiple plots
 ```
 
 ### Functions (create separate file and source it)
@@ -217,14 +218,14 @@ if (!any(list.files(clean_data_dir) == "la_clean.Rdata")) { # check if def_clean
 ``` r
 load(file.path(clean_data_dir, "def_clean_df.Rdata"))
 
-#load(file.path(clean_data_dir, "def_clean.Rdata"))
+load(file.path(clean_data_dir, "def_clean.Rdata"))
 
 load(file.path(clean_data_dir, "la_clean.Rdata"))
 ```
 
 ### Deforestation by size of cleared patch trends
 
-#### Inspired by Fig. 1 (Assunção et al., 2017)
+Inspired by **Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)** ![](../images/deforestation_increment_sizes.png)
 
 ``` r
 def_clean_df %>% 
@@ -257,10 +258,11 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
-#### Inspired by Figure 1 (a) from Rosa et al. (2012)
+**Fig. 2 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)** <br> ![](../images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
 
 ``` r
-def_clean_df %>% 
+panel_a <- 
+  def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2002) %>% 
   mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
@@ -287,14 +289,9 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
-```
 
-![](final-project_files/figure-markdown_github/unnamed-chunk-8-1.png)
-
-#### Inspired by Figure 1 (b) Rosa et al. (2012)
-
-``` r
-def_clean_df %>% 
+panel_b <-
+  def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2002) %>% 
   mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
@@ -321,13 +318,18 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
+
+
+grid.arrange(panel_a, panel_b, ncol = 1)
 ```
 
-![](final-project_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](final-project_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ### State Heterogeneity
 
-#### Simple PLot of State Boundaries and UFs
+Inspired by **Fig. 3 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assunção et al., 2017)** ![](../images/deforestation_percentage_byState_byYear_bySize.png)
+
+#### Simple Plot of State Boundaries and UFs
 
 ``` r
 cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>% 
@@ -338,7 +340,7 @@ cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>%
   theme_bw()
 ```
 
-![](final-project_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![](final-project_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 #### Plot of proportion of polygons by cleared patch through time by state.
 
@@ -369,9 +371,9 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom", strip.background = element_rect(fill=NA))
 ```
 
-![](final-project_files/figure-markdown_github/unnamed-chunk-11-1.png)
+![](final-project_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
-Maps of the proportion of small polygons across years
+#### Maps of the proportion of small polygons across years
 
 ``` r
 def_clean_df %>% 
@@ -391,30 +393,80 @@ ggplot() +
   
   geom_sf(aes(fill = share_def_small)) +
   facet_wrap(. ~ prodes_year_increment, ncol = 4) +
-  scale_fill_distiller(type = "div", palette = 2, name = "Share Small Polygon Deforestation") +
+  scale_fill_distiller(type = "seq", palette = "YlOrRd", name = "Share Small Polygon Deforestation") +
   
   theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
         panel.background = element_blank(), 
         strip.background = element_rect(fill = NA),
         axis.line = element_blank(), axis.ticks = element_blank(), 
-        axis.title = element_blank(), axis.text = element_blank())
+        axis.title = element_blank(), axis.text = element_blank(), 
+        legend.position = "bottom")
 ```
 
-    ## Joining, by = "state_uf"
+![](final-project_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
-![](final-project_files/figure-markdown_github/unnamed-chunk-12-1.png)
-
-Histogram
+#### Maps of the ratio of total deforestation and state area across years
 
 ``` r
 def_clean_df %>% 
-  filter(area <= 30, area >= 20, prodes_year_increment > 2000) %>% 
-  mutate(size = ifelse(area < 25, "small", "large")) %>% 
+  group_by(prodes_year_increment) %>% 
+  filter(prodes_year_increment >= 2002) %>% 
+  group_by(state_uf, prodes_year_increment) %>% 
+  summarise(area_def = sum(area)) %>% 
+  replace_na(area_def = 0) %>% 
+  right_join(la_clean) %>%
+  mutate(share_def = area_def/area) %>% 
+  
+ggplot() +
+  
+  geom_sf(aes(fill = share_def)) +
+  facet_wrap(. ~ prodes_year_increment, ncol = 4) +
+  scale_fill_distiller(type = "seq", palette = "YlOrRd", name = "Share of State Deforested Area") +
+  
+  theme(panel.grid.major = element_line(colour = "White"), 
+        panel.grid.minor = element_line(colour = "white"),
+        panel.background = element_blank(), 
+        strip.background = element_rect(fill = NA),
+        axis.line = element_blank(), axis.ticks = element_blank(), 
+        axis.title = element_blank(), axis.text = element_blank(),
+        legend.position = "bottom")
+```
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-12-1.png)
+
+### Spatial Distribution of deforestation by cleared patch size across time (2002-2014)
+
+**Fig. 4 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)** ![](../images/deforestation_map_bySize_rosa_et_al_2012.png)
+
+``` r
+def_clean %>% 
+  filter(prodes_year_increment == 2010 | prodes_year_increment == 2012) %>% 
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  group_by(state_uf, prodes_year_increment, size) %>% 
+  st_union(by_feature = T) %>% 
+  ungroup() %>% 
   mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
-  ggplot(aes(x = area, fill = size)) +
-  geom_bar( stat = "density") +
-  facet_wrap(. ~ prodes_year_increment, ncol = 4)
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+  
+ggplot() +
+  
+  geom_sf(aes(col = size, fill = size), size = 2) +
+  
+  geom_sf(data = la_clean, fill = NA) +
+  
+  facet_wrap(. ~ prodes_year_increment, ncol = 1) +
+  
+   theme(panel.grid.major = element_line(colour = "White"), 
+        panel.grid.minor = element_line(colour = "white"),
+        panel.background = element_blank(), 
+        strip.background = element_rect(fill = NA),
+        axis.line = element_blank(), axis.ticks = element_blank(), 
+        axis.title = element_blank(), axis.text = element_blank(),
+        legend.position = "bottom")
 ```
 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-13-1.png)
