@@ -391,7 +391,7 @@ ggplot() +
   
   geom_sf(aes(fill = share_def_small)) +
   facet_wrap(. ~ prodes_year_increment, ncol = 4) +
-  scale_fill_distiller(type = "seq", palette = "YlOrRd", direction = -1, name = "Share Small Polygon Deforestation") +
+  scale_fill_distiller(type = "seq", palette = "YlOrRd", direction = 1, name = "Share Small Polygon Deforestation") +
   
   theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
@@ -420,7 +420,7 @@ ggplot() +
   
   geom_sf(aes(fill = share_def)) +
   facet_wrap(. ~ prodes_year_increment, ncol = 4) +
-  scale_fill_distiller(type = "seq", palette = "YlOrRd", direction = -1, name = "Share of State Deforested Area") +
+  scale_fill_distiller(type = "seq", palette = "YlOrRd", direction = 1, name = "Share of State Deforested Area") +
   
   theme(panel.grid.major = element_line(colour = "White"), 
         panel.grid.minor = element_line(colour = "white"),
