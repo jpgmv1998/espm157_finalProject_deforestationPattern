@@ -10,6 +10,7 @@ library(tidyverse)    # to manipulate data
 library(sf)           # to work with simple features data
 library(XML)          # XML for HTML processing
 library(utils)        # for 'unzip' function
+library(RColorBrewer) # for color palettes
 ```
 
 ### Functions (create separate file and source it)
@@ -43,11 +44,10 @@ UnzipMultipleFolders <- function(zip.dir,
       # unzip procedure
       while (length(zip_list) > 0) {                          # 'while' to enable recursive unzip
         for (zip_folder in zip_list) {
-          unzip_dir <- gsub(pattern     = zip.pattern,   # sets unzipped dir structure to mirror original zipped dir structure
-                            replacement = "",
-                            x           = zip_folder,
-                            ignore.case = TRUE)
-    
+          unzip_dir <- str_replace(pattern     = zip.pattern,   # sets unzipped dir structure to mirror original zipped dir structure
+                                   replacement = "",
+                                   string      = zip_folder)
+          
           unzip(zipfile   = zip_folder,                       # unzips folders
                 overwrite = T,
                 exdir     = unzip_dir)
@@ -72,6 +72,8 @@ crs_SIRGAS2000albers <- "+proj=aea +lat_1=-2 +lat_2=-22 +lat_0=-12 +lon_0=-54 +x
 
 ### Data Download
 
+#### Deforestation
+
 ``` r
 # web address setup
 raw_data_url_index <- "http://www.dpi.inpe.br/prodesdigital/dadosn/2014/"
@@ -85,11 +87,8 @@ raw_data_dir <- "data_input"
     dir.create(path  = raw_data_dir)
     print(paste0("***NOTE: directory ", raw_data_dir, " created."))
   }
-```
-
-    ## [1] "***NOTE: directory data_input created."
-
-``` r
+  
+  
   if (length(list.files(raw_data_dir)) == 0) {
   
     html_matched  <- 
@@ -114,7 +113,24 @@ raw_data_dir <- "data_input"
 }
 ```
 
+#### Legal Aamazon - State Boundaries
+
+``` r
+if (!file.exists(file.path(raw_data_dir, "UF_AmLeg_LLwgs84"))) { # only download data if there is not a local copy
+  
+  raw_data_url_index_2 <- "http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip" # set url 
+  
+  download.file(url = raw_data_url_index_2, destfile = "data_input/UF_AmLeg_LLwgs84.zip") # download the shapefile
+  
+  UnzipMultipleFolders(zip.dir      = raw_data_dir,    # unzips downloaded data and deletes original compressed files
+                       zip.pattern  = ".zip",
+                       unzip.subdir = T)
+}
+```
+
 ### Data Cleaning
+
+#### Deforestation
 
 ``` r
 clean_data_dir <- "data_clean"
@@ -123,16 +139,13 @@ if (!dir.exists(paths = clean_data_dir)) { # check existence of "data_clean" fol
   dir.create(path  = clean_data_dir)
   print(paste0("***NOTE: directory ", clean_data_dir, " created."))
 }
-```
 
-    ## [1] "***NOTE: directory data_clean created."
 
-``` r
 if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clean.Rdata already exists locally
 
-  folder_name  <- list.files(raw_data_dir) # create a list with all mosaic scene folders
+  folder_name  <- list.files(raw_data_dir, pattern = "_shp") # create a list with all mosaic scene folders
   
-  layer_name <- gsub(pattern = "_shp", replacement = "__pol", x = folder_name) # layer name is very similar to the folder name
+  layer_name <- str_replace(pattern = "_shp", replacement = "__pol", string = folder_name) # layer name is very similar to the folder name
   
   complete_path <- file.path(raw_data_dir, folder_name, "2014")
   
@@ -165,35 +178,58 @@ if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clea
 }
 ```
 
-Load clean data
+#### Legal Aamazon - State Boundaries
+
+``` r
+if (!any(list.files(clean_data_dir) == "la_clean.Rdata")) { # check if def_clean.Rdata already exists locally
+
+  folder_name  <- list.files(raw_data_dir, pattern = "AmLeg") # create a list with the Legal Amazon folder
+  
+  subfolder_name <- str_replace(pattern = "UF", replacement = "UFS", string = folder_name) # subfolder name is very similar to the folder name
+  
+  layer_name <-     # layer name is very similar to the subfolder name
+    toupper(subfolder_name) %>% 
+    str_replace(pattern = "AMLEG", replacement = "AMZLEG")
+
+  
+  complete_path <- file.path(raw_data_dir, folder_name, subfolder_name)
+
+  la_clean <- 
+    st_read(dsn = complete_path, layer = layer_name, quiet = T) %>% 
+    st_transform(crs_SIRGAS2000albers) %>% 
+    mutate(area = unclass(st_area(.)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
+    rename(state_uf = NOME) %>%  # adjust columns name
+    select(state_uf, area, geometry) %>% 
+    mutate(state_uf = as.character(state_uf)) %>% 
+    mutate(state_uf = if_else(state_uf == "AMAPÁ", "AP", state_uf)) %>% 
+    mutate(state_uf = if_else(state_uf == "MATO GROSSO", "MT", state_uf)) %>%
+    mutate(state_uf = if_else(state_uf == "RORAIMA", "RR", state_uf)) %>% 
+    mutate(state_uf = str_sub(str_to_upper(state_uf),start = 1, end = 2))  # make a uniform pattern  
+  
+
+  save(la_clean, file = file.path(clean_data_dir, "la_clean.Rdata"))  
+
+}
+```
+
+### Load clean data
 
 ``` r
 load(file.path(clean_data_dir, "def_clean_df.Rdata"))
 
-summary(def_clean_df)
+#load(file.path(clean_data_dir, "def_clean.Rdata"))
+
+load(file.path(clean_data_dir, "la_clean.Rdata"))
 ```
 
-    ##    polyg_id            state_uf      prodes_class      
-    ##  Length:1508648     PA     :625821   Length:1508648    
-    ##  Class :character   MT     :225828   Class :character  
-    ##  Mode  :character   RO     :199107   Mode  :character  
-    ##                     AM     :137924                     
-    ##                     AC     :129956                     
-    ##                     MA     :108158                     
-    ##                     (Other): 81854                     
-    ##  prodes_year_increment      area         
-    ##  Min.   :1997          Min.   :    0.00  
-    ##  1st Qu.:2001          1st Qu.:    2.88  
-    ##  Median :2003          Median :    7.57  
-    ##  Mean   :2004          Mean   :   49.27  
-    ##  3rd Qu.:2008          3rd Qu.:   15.68  
-    ##  Max.   :2014          Max.   :76837.39  
-    ## 
+### Deforestation by size of cleared patch trends
+
+#### Inspired by Fig. 1 (Assunção et al., 2017)
 
 ``` r
 def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
-  filter(prodes_year_increment >= 2001) %>% 
+  filter(prodes_year_increment >= 2002) %>% 
   mutate(size = ifelse(area < 25, "small", "large")) %>% 
   group_by(state_uf, prodes_year_increment, size) %>% 
   summarise(area_bysize = sum(area)) %>% 
@@ -202,22 +238,172 @@ def_clean_df %>%
   rename(def_large = large, def_small = small) %>% 
   mutate(def_total = def_large + def_small) %>% 
   group_by(prodes_year_increment) %>% 
-  summarise(sum_def_large = sum(def_large, na.rm = T)/10000, sum_def_small = sum(def_small, na.rm = T)/10000) %>% 
+  summarise(sum_def_large = sum(def_large, na.rm = T)/100000, sum_def_small = sum(def_small, na.rm = T)/100000) %>% 
   gather(key = "size", value = "def", -prodes_year_increment) %>% 
   
 ggplot(aes(x = prodes_year_increment, y = def, fill = size)) +
   geom_area() +
   scale_fill_manual(name = "Polygon Size", labels = c("Large (>25ha)", "Small (<25ha)"), values = c("coral1", "lightblue")) +
-  ylab("Deforestation Increment (10,000 ha)") +
-  xlab("Year") +
-  ggtitle("Deforestation Trends by Polygon Size") +
-  scale_x_continuous(breaks = c(2001:2014), expand = c(0, 0), limits = c(2001, 2014.2)) +
+  labs(x = "Year", 
+       y = "Deforestation Increment (100,000 ha)", 
+       title = "Deforestation Trends by Polygon Size", 
+       subtitle = "Inspired by Fig. 1 (Assunção et al., 2017) ",  
+       caption = "Notes: Reproducing Fig.1 from Assunção et al. (2017) expanding time period to include 2 more years.\n The figure illustrates annual Brazilian Amazon deforestation increment decomposed by size of cleared forest patch") +
+  scale_x_continuous(breaks = c(2002:2014), expand = c(0, 0), limits = c(2002, 2014.2)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
 ```
 
-![](final-project_files/figure-markdown_github/unnamed-chunk-5-1.png)
+![](final-project_files/figure-markdown_github/unnamed-chunk-7-1.png)
+
+#### Inspired by Figure 1 (a) from Rosa et al. (2012)
+
+``` r
+def_clean_df %>% 
+  group_by(prodes_year_increment) %>% 
+  filter(prodes_year_increment >= 2002) %>% 
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  group_by(state_uf, prodes_year_increment, size) %>% 
+  summarise(area_bysize = sum(area)) %>% 
+  ungroup() %>% 
+  mutate(area_bysize = area_bysize/10000) %>% 
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
+
+  
+ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
+  geom_bar(aes(fill = size), stat = "identity", position = "fill") +
+  scale_fill_manual(name = "Polygon Size", values = brewer.pal(n = 6, name = "Greys")[2:6]) +
+  labs(x = "Year", 
+       y = "Deforestation Share",
+       title = "Deforestation Trends by Polygon Size",  
+       subtitle = "Inspired by Figure 1 - (a) - Rosa et al. (2012)",
+       caption = "Notes: Reproducing Fig.1 (a) from Rosa et al. (2012) expanding time period to include 5 more years and different patches.\n The figure illustrates the share of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009.") +
+  scale_x_discrete(breaks = c(2002:2014), expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
+```
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
+#### Inspired by Figure 1 (b) Rosa et al. (2012)
+
+``` r
+def_clean_df %>% 
+  group_by(prodes_year_increment) %>% 
+  filter(prodes_year_increment >= 2002) %>% 
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  group_by(state_uf, prodes_year_increment, size) %>% 
+  summarise(area_bysize = sum(area)) %>% 
+  ungroup() %>% 
+  mutate(area_bysize = area_bysize/10000) %>% 
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
+
+  
+ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
+  geom_bar(position = "stack", stat = "identity") +
+  scale_fill_manual(name = "Polygon Size", values = brewer.pal(n = 6, name = "Greys")[2:6]) +
+  labs(x = "Year", 
+       y = "Deforestation rate (10,000 ha/yr)",
+       title = "Deforestation Trends by Polygon Size",  
+       subtitle = "Inspired by Figure 1 - (b) - Rosa et al. (2012)",
+       caption = "Notes: Reproducing Fig.1 (b) from Rosa et al. (2012) expanding time period to include 5 more years and different patches.\n The figure illustrates area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009.") +
+  scale_x_discrete(breaks = c(2002:2014)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
+```
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-9-1.png)
+
+### State Heterogeneity
+
+#### Simple PLot of State Boundaries and UFs
+
+``` r
+cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>% 
+  ggplot() +
+  geom_sf(fill = NA) +
+  geom_text(aes(X, Y, label = state_uf), size = 5) +
+  labs(x = "Lon", y = "Lat", title = "Map of Legal Amazon - State Boundaries") +
+  theme_bw()
+```
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-10-1.png)
+
+#### Plot of proportion of polygons by cleared patch through time by state.
+
+``` r
+def_clean_df %>% 
+  group_by(prodes_year_increment) %>% 
+  filter(prodes_year_increment >= 2002) %>% 
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  group_by(state_uf, prodes_year_increment, size) %>% 
+  summarise(area_bysize = sum(area)) %>% 
+  ungroup() %>% 
+  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
+  
+ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
+  geom_bar(aes(fill = size), stat = "identity", position = "fill") +
+  scale_fill_manual(name = "Polygon Size", values = brewer.pal(n = 6, name = "Greys")[2:6]) +
+  ylab("Share Polygon Size") +
+  xlab("Year") +
+  ggtitle("Polygons Trends by State and Cleared Patch Size") +
+  scale_x_discrete(breaks = c(2002:2014), expand = c(0,0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  facet_wrap(. ~ state_uf, ncol = 2, scales = "free") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom", strip.background = element_rect(fill=NA))
+```
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-11-1.png)
+
+Maps of the proportion of small polygons across years
+
+``` r
+def_clean_df %>% 
+  group_by(prodes_year_increment) %>% 
+  filter(prodes_year_increment >= 2002) %>% 
+  mutate(size = ifelse(area < 25, "small", "large")) %>% 
+  group_by(state_uf, prodes_year_increment, size) %>% 
+  summarise(area_bysize = sum(area)) %>% 
+  spread(key = size, value = area_bysize) %>% 
+  replace_na(list(large = 0, small = 0)) %>% 
+  rename(def_large = large, def_small = small) %>% 
+  mutate(def_total = def_large + def_small) %>% 
+  mutate(share_def_small = def_small/def_total) %>% 
+  right_join(la_clean) %>% 
+  
+ggplot() +
+  
+  geom_sf(aes(fill = share_def_small)) +
+  facet_wrap(. ~ prodes_year_increment, ncol = 4) +
+  scale_fill_distiller(type = "div", palette = 2, name = "Share Small Polygon Deforestation") +
+  
+  theme(panel.grid.major = element_line(colour = "White"), 
+        panel.grid.minor = element_line(colour = "white"),
+        panel.background = element_blank(), 
+        strip.background = element_rect(fill = NA),
+        axis.line = element_blank(), axis.ticks = element_blank(), 
+        axis.title = element_blank(), axis.text = element_blank())
+```
+
+    ## Joining, by = "state_uf"
+
+![](final-project_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 Histogram
 
@@ -231,45 +417,4 @@ def_clean_df %>%
   facet_wrap(. ~ prodes_year_increment, ncol = 4)
 ```
 
-![](final-project_files/figure-markdown_github/unnamed-chunk-6-1.png)
-
-Plot of proportion of small polygons through time by state.
-
-``` r
-def_clean_df %>% 
-  group_by(prodes_year_increment) %>% 
-  filter(prodes_year_increment >= 2001) %>% 
-  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
-  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
-  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
-  group_by(state_uf, prodes_year_increment, size) %>% 
-  summarise(area_bysize = sum(area)) %>% 
-  ungroup() %>% 
-  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
-  #mutate(size = factor(size, levels = c("<25 ha", "25-100 ha", "100-500 ha", "> 500 ha"))) %>% 
-  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
-  #spread(key = size, value = area_bysize) %>% 
-  #replace_na(list(`<25 ha` = 0, `> 500 ha` = 0, `100-500 ha` = 0, `25-100 ha` = 0)) %>% 
-  #mutate(def_total = `<25 ha` + `> 500 ha` + `100-500 ha` + `25-100 ha`) %>% 
-  #mutate(`<25 ha` = `<25 ha`/def_total) %>% 
-  #mutate(`25-100 ha` = `25-100 ha`/def_total) %>% 
-  #mutate(`100-500 ha` = `100-500 ha`/def_total) %>% 
-  #mutate(`> 500 ha` = `> 500 ha`/def_total) %>% 
- 
-
-ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
-  geom_bar(aes(fill = size), stat = "identity", position = "fill") +
-  #scale_fill_manual(name = "Polygon Size", labels = c("Large (>25ha)", "Small (<25ha)"), values = c("coral1", "lightblue")) +
-  ylab("Share Polygon Size") +
-  xlab("Year") +
-  ggtitle("Polygons Trends by State and Cleared Patch Size") +
-  scale_x_discrete(breaks = c(2001:2014), expand = c(0,0)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  facet_wrap(. ~ state_uf, ncol = 2, scales = "free") +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom", strip.background = element_rect(fill=NA) 
-)
-```
-
-![](final-project_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](final-project_files/figure-markdown_github/unnamed-chunk-13-1.png)
