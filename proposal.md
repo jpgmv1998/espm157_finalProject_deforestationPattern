@@ -60,11 +60,11 @@ CRS: LongLat (coordinate system), WGS84 (datum), not projected
 
 ### Questions
 
-1) Analyze Deforestation Trends in the Brazilian Amazon by the size of cleared patch (2001-2014) - inspired by figures 1 and 4.
+1) Analyze Deforestation Trends in the Brazilian Amazon by the size of cleared patch (2002-2014) - inspired by figures 1 and 4.
 
-2) Analyze Deforestation Trends in the Brazilian Amazon by the size of cleared patch and State (2001-2014) - inspired by figures 2 and 3.
+2) Analyze State Heterogeneity on Deforestation Trends in the Brazilian Amazon by the size of cleared patch (2002-2014) - inspired by figure 2.
 
-3) Analyze discontinuities in deforestation outcomes (y-axis) with a small bandwidth around the 25 ha cutoff, using the polygon size as the running variable (x-axis) for a period before and a period after the implementation of DETER.
+3) Analyze Spatial Distribution of the Deforestation by the size of cleared patch - inspired by figure 3.
 
 
 ### Project questions will illustrate all of the following tasks:
@@ -89,6 +89,9 @@ CRS: LongLat (coordinate system), WGS84 (datum), not projected
 - Parsing extensible data formats (JSON, XML)
 - **Use of spatial vector data (`sf` package) and visualization of spatial data**
 - Creation of an R package
+- **Expansion of ggplot functions (to include more than default characteristics)**
+- **Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentaiton**
+- **use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)**
 
 ### References
 
@@ -96,33 +99,6 @@ Assunção, Juliano, Clarissa Gandour, Pedro Pessoa, and Romero Rocha. "Property
 
 Rosa, Isabel MD, Carlos Souza Jr, and Robert M. Ewers. "Changes in size of deforested patches in the Brazilian Amazon." Conservation Biology 26, no. 5 (2012): 932-937.(<https://doi.org/10.1111/j.1523-1739.2012.01901.x>)
 
-## Project Guidelines
-
-### Project questions must illustrate all of the following tasks:
-
-- Some form of data access / reading into R
-- Data tidying preparation
-- Initial data visualization
-- Use of GitHub
-- Reproducible execution with use of Travis
-- RMarkdown writeup, with final submission as a nicely formatted PDF document that includes code and results.
-- Overall clean and clear presentation of repository, code, and explanations.
-
-### and at least three of the following skills (this list may be modified/extended):
-
-- **Use of at least 5 `dplyr` verbs / functions**
-- **Writing / working with custom R functions**
-- Creating an R package for functions used in the analysis
-- Interaction with an API
-- **Use of regular expressions**
-- Use of an external relational database
-- Preparing processed data for archiving / publication
-- Parsing extensible data formats (JSON, XML)
-- **Use of spatial vector data (`sf` package) and visualization of spatial data**
-- Creation of an R package
-- **Expansion of ggplot functions (to include more than default characteristics)**
-- **Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentaiton**
-- **use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)**
 
 # Final Rubric 30 pts total
 
