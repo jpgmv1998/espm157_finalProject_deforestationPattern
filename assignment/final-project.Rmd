@@ -32,61 +32,66 @@ source("functions.R")
 
 ### Data Download
 
-```{r  if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
-# set url
-clean_data_url_index <- "https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/download/data/data_clean.zip"
-# set folder name
-folder_name <- "data_clean.zip"
-# download clean data
-download.file(url = clean_data_url_index, destfile = folder_name)
-# unzips folder
-unzip(zipfile   = folder_name, 
-      overwrite = T)
-# remove zip file
-unlink(folder_name)
+```{r}
+
+if (!dir.exists(paths = clean_data_dir)) {
+  # set url
+  clean_data_url_index <- "https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/download/data/data_clean.zip"
+  # set folder name
+  folder_name <- "data_clean.zip"
+  # download clean data
+  download.file(url = clean_data_url_index, destfile = folder_name)
+  # unzips folder
+  unzip(zipfile   = folder_name, 
+        overwrite = T)
+  # remove zip file
+  unlink(folder_name)
+}
 ```
 
 #### Deforestation
-```{r if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
-# web address setup
-raw_data_url_index <- "http://www.dpi.inpe.br/prodesdigital/dadosn/2014/"
-# directory setup
-raw_data_dir <- "data_input" 
-# download of 2014 shapefile data
-if (!dir.exists(paths = raw_data_dir)) { # check existence of "data_input" folder
-    dir.create(path  = raw_data_dir)
-    print(paste0("***NOTE: directory ", raw_data_dir, " created."))
-  } 
-  
-  
-  if (length(list.files(raw_data_dir)) == 0) {
-    html_matched <- htmlParse(raw_data_url_index) %>%  # parses html string (splits into components)
-    getNodeSet("//a") %>%  # finds nodes matching criterion "//a"
-    map(xmlGetAttr, "href") %>% 
-    grep(pattern = "*_shp.zip", value = T)  # selects elements matching "*_shp.zip" (returns landsat mosaic scenes)
-    raw_data_url_zipfiles <- paste(raw_data_url_index, html_matched,
-                                   sep = "")
-    dest_path <- file.path(raw_data_dir, html_matched)
-    map2(raw_data_url_zipfiles, dest_path, function(x,y) download.file(x,y))  # name determined in 'html_matched'
-    UnzipMultipleFolders(zip.dir      = raw_data_dir,  # unzips downloaded data and deletes original compressed files
-                         zip.pattern  = ".zip",
-                         unzip.subdir = T)
-
+```{r}
+if (!dir.exists(paths = clean_data_dir)) {
+  # web address setup
+  raw_data_url_index <- "http://www.dpi.inpe.br/prodesdigital/dadosn/2014/"
+  # directory setup
+  raw_data_dir <- "data_input" 
+  # download of 2014 shapefile data
+  if (!dir.exists(paths = raw_data_dir)) { # check existence of "data_input" folder
+      dir.create(path  = raw_data_dir)
+      print(paste0("***NOTE: directory ", raw_data_dir, " created."))
+    } 
+    
+    
+    if (length(list.files(raw_data_dir)) == 0) {
+      html_matched <- htmlParse(raw_data_url_index) %>%  # parses html string (splits into components)
+      getNodeSet("//a") %>%  # finds nodes matching criterion "//a"
+      map(xmlGetAttr, "href") %>% 
+      grep(pattern = "*_shp.zip", value = T)  # selects elements matching "*_shp.zip" (returns landsat mosaic scenes)
+      raw_data_url_zipfiles <- paste(raw_data_url_index, html_matched,
+                                     sep = "")
+      dest_path <- file.path(raw_data_dir, html_matched)
+      map2(raw_data_url_zipfiles, dest_path, function(x,y) download.file(x,y))  # name determined in 'html_matched'
+      UnzipMultipleFolders(zip.dir      = raw_data_dir,  # unzips downloaded data and deletes original compressed files
+                           zip.pattern  = ".zip",
+                           unzip.subdir = T)
+  }
 }
-
 
 ```
 
 
 #### Legal Aamazon - State Boundaries
 
-```{r if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
-if (!file.exists(file.path(raw_data_dir, "UF_AmLeg_LLwgs84"))) { # only download data if there is not a local copy
-  raw_data_url_index_2 <- "http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip" # set url 
-  download.file(url = raw_data_url_index_2, destfile = "data_input/UF_AmLeg_LLwgs84.zip") # download the shapefile
-  UnzipMultipleFolders(zip.dir      = raw_data_dir,    # unzips downloaded data and deletes original compressed files
-                       zip.pattern  = ".zip",
-                       unzip.subdir = T)
+```{r}
+if (!dir.exists(paths = clean_data_dir)) {
+  if (!file.exists(file.path(raw_data_dir, "UF_AmLeg_LLwgs84"))) { # only download data if there is not a local copy
+    raw_data_url_index_2 <- "http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip" # set url 
+    download.file(url = raw_data_url_index_2, destfile = "data_input/UF_AmLeg_LLwgs84.zip") # download the shapefile
+    UnzipMultipleFolders(zip.dir      = raw_data_dir,    # unzips downloaded data and deletes original compressed files
+                         zip.pattern  = ".zip",
+                         unzip.subdir = T)
+  }
 }
 ```
 
@@ -94,75 +99,77 @@ if (!file.exists(file.path(raw_data_dir, "UF_AmLeg_LLwgs84"))) { # only download
 ### Data Cleaning
 
 #### Deforestation
-```{r if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
-if (!dir.exists(paths = clean_data_dir)) { # check existence of "data_clean" folder
-  dir.create(path  = clean_data_dir)
-  print(paste0("***NOTE: directory ", clean_data_dir, " created."))
-}
-
-
-if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clean.Rdata already exists locally
-
-  folder_name  <- list.files(raw_data_dir, pattern = "_shp") # create a list with all mosaic scene folders
-  layer_name <- str_replace(pattern = "_shp", replacement = "__pol", string = folder_name) # layer name is very similar to the folder name
-  complete_path <- file.path(raw_data_dir, folder_name, "2014")
-  mosaic_scene <- 
-    map2(.x = complete_path, .y = layer_name, .f = st_read, quiet = T) 
-  def_clean <-
-    mosaic_scene %>% 
-    map(st_set_crs, crs_SAD69longlatPre96BR) %>% # some scenes are missing the proj4string, so we set it based on documentation and existing proj4string 
-    map(filter, mainclass == "DESFLORESTAMENTO") %>% # extracting deforestation data
-    reduce(rbind) %>% # merging all sf objects into a single one
-    st_transform(crs_SIRGAS2000albers) %>%  # projecting to "SIRGAS2000albers"
-    mutate(area = unclass(st_area(.)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
-    mutate(polyg_id = paste(pathrow, linkcolumn, sep = "_")) %>% # create id column
-    mutate(mainclass = as.character(mainclass)) %>% # transform column class from factor to character
-    mutate(mainclass = replace(mainclass, mainclass == "DESFLORESTAMENTO", "DEFORESTATION")) %>% # translate mainclass
-    rename(state_uf = uf, prodes_class = mainclass, prodes_year_increment = ano) %>%  # adjust columns name
-    select(polyg_id, state_uf, prodes_class, prodes_year_increment, area) # keep column of interest
+```{r}
+if (!dir.exists(paths = clean_data_dir)) {
+  if (!dir.exists(paths = clean_data_dir)) { # check existence of "data_clean" folder
+    dir.create(path  = clean_data_dir)
+    print(paste0("***NOTE: directory ", clean_data_dir, " created."))
+  }
   
-  rm(mosaic_scene)
-  def_clean_df <- # create a version of the clean data with only data.frame information to have a light version of the data
-    def_clean %>% 
-    st_set_geometry(NULL)
+  if (!any(list.files(clean_data_dir) == "def_clean.Rdata")) { # check if def_clean.Rdata already exists locally
   
-  save(def_clean, file = file.path(clean_data_dir, "def_clean.Rdata"))  
-  save(def_clean_df, file = file.path(clean_data_dir, "def_clean_df.Rdata"))  
-
+    folder_name  <- list.files(raw_data_dir, pattern = "_shp") # create a list with all mosaic scene folders
+    layer_name <- str_replace(pattern = "_shp", replacement = "__pol", string = folder_name) # layer name is very similar to the folder name
+    complete_path <- file.path(raw_data_dir, folder_name, "2014")
+    mosaic_scene <- 
+      map2(.x = complete_path, .y = layer_name, .f = st_read, quiet = T) 
+    def_clean <-
+      mosaic_scene %>% 
+      map(st_set_crs, crs_SAD69longlatPre96BR) %>% # some scenes are missing the proj4string, so we set it based on documentation and existing proj4string 
+      map(filter, mainclass == "DESFLORESTAMENTO") %>% # extracting deforestation data
+      reduce(rbind) %>% # merging all sf objects into a single one
+      st_transform(crs_SIRGAS2000albers) %>%  # projecting to "SIRGAS2000albers"
+      mutate(area = unclass(st_area(.)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
+      mutate(polyg_id = paste(pathrow, linkcolumn, sep = "_")) %>% # create id column
+      mutate(mainclass = as.character(mainclass)) %>% # transform column class from factor to character
+      mutate(mainclass = replace(mainclass, mainclass == "DESFLORESTAMENTO", "DEFORESTATION")) %>% # translate mainclass
+      rename(state_uf = uf, prodes_class = mainclass, prodes_year_increment = ano) %>%  # adjust columns name
+      select(polyg_id, state_uf, prodes_class, prodes_year_increment, area) # keep column of interest
+    
+    rm(mosaic_scene)
+    def_clean_df <- # create a version of the clean data with only data.frame information to have a light version of the data
+      def_clean %>% 
+      st_set_geometry(NULL)
+    
+    save(def_clean, file = file.path(clean_data_dir, "def_clean.Rdata"))  
+    save(def_clean_df, file = file.path(clean_data_dir, "def_clean_df.Rdata"))  
+  }
 }
 ```
 
 
 #### Legal Aamazon - State Boundaries
-```{r if (dir.exists(paths = clean_data_dir)) {eval = F} else {eval = T}}
-if (!any(list.files(clean_data_dir) == "la_clean.Rdata")) { # check if def_clean.Rdata already exists locally
-
-  folder_name  <- list.files(raw_data_dir, pattern = "AmLeg") # create a list with the Legal Amazon folder
+```{r}
+if (!dir.exists(paths = clean_data_dir)) {
+  if (!any(list.files(clean_data_dir) == "la_clean.Rdata")) { # check if def_clean.Rdata already exists locally
   
-  subfolder_name <- str_replace(pattern = "UF", replacement = "UFS", string = folder_name) # subfolder name is very similar to the folder name
+    folder_name  <- list.files(raw_data_dir, pattern = "AmLeg") # create a list with the Legal Amazon folder
+    
+    subfolder_name <- str_replace(pattern = "UF", replacement = "UFS", string = folder_name) # subfolder name is very similar to the folder name
+    
+    layer_name <-     # layer name is very similar to the subfolder name
+      toupper(subfolder_name) %>% 
+      str_replace(pattern = "AMLEG", replacement = "AMZLEG")
   
-  layer_name <-     # layer name is very similar to the subfolder name
-    toupper(subfolder_name) %>% 
-    str_replace(pattern = "AMLEG", replacement = "AMZLEG")
-
+    
+    complete_path <- file.path(raw_data_dir, folder_name, subfolder_name)
   
-  complete_path <- file.path(raw_data_dir, folder_name, subfolder_name)
-
-  la_clean <- 
-    st_read(dsn = complete_path, layer = layer_name, quiet = T) %>% 
-    st_transform(crs_SIRGAS2000albers) %>% 
-    mutate(area = unclass(st_area(.)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
-    rename(state_uf = NOME) %>%  # adjust columns name
-    select(state_uf, area, geometry) %>% 
-    mutate(state_uf = as.character(state_uf)) %>% 
-    mutate(state_uf = if_else(state_uf == "AMAPÁ", "AP", state_uf)) %>% 
-    mutate(state_uf = if_else(state_uf == "MATO GROSSO", "MT", state_uf)) %>%
-    mutate(state_uf = if_else(state_uf == "RORAIMA", "RR", state_uf)) %>% 
-    mutate(state_uf = str_sub(str_to_upper(state_uf),start = 1, end = 2))  # make a uniform pattern  
+    la_clean <- 
+      st_read(dsn = complete_path, layer = layer_name, quiet = T) %>% 
+      st_transform(crs_SIRGAS2000albers) %>% 
+      mutate(area = unclass(st_area(.)) * convert.sqm.to.ha) %>% # create area column and convert it to hectars
+      rename(state_uf = NOME) %>%  # adjust columns name
+      select(state_uf, area, geometry) %>% 
+      mutate(state_uf = as.character(state_uf)) %>% 
+      mutate(state_uf = if_else(state_uf == "AMAPÁ", "AP", state_uf)) %>% 
+      mutate(state_uf = if_else(state_uf == "MATO GROSSO", "MT", state_uf)) %>%
+      mutate(state_uf = if_else(state_uf == "RORAIMA", "RR", state_uf)) %>% 
+      mutate(state_uf = str_sub(str_to_upper(state_uf),start = 1, end = 2))  # make a uniform pattern  
+    
   
-
-  save(la_clean, file = file.path(clean_data_dir, "la_clean.Rdata"))  
-
+    save(la_clean, file = file.path(clean_data_dir, "la_clean.Rdata"))  
+  
+  }
 }
 ```
 
