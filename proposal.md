@@ -22,15 +22,10 @@ Relevant information: year of deforestation, spatial location and polygon catego
 
 CRS: LongLat (coordinate system), SAD69_pre96_BRonly (datum), not projected 
 
-2. Brazilian Municipalities Boundaries (2015) - Source: IBGE (<ftp://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2015/Brasil/BR/br_municipios.zip>)
 
-Contains a shapefile with municipal perimeter for full Brazilian extension with 2015 as the year of reference (most recent).
+2. Legal Amazon (*Amazonia Legal*) Perimeter Shapefile - Source: INPE (<http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip>)
 
-CRS: SIRGAS 2000 longlat (not projected)
-
-3. Legal Amazon (*Amazonia Legal*) Perimeter Shapefile - Source: INPE (<http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip>)
-
-Shapefile with the Legal Amazon Limits. Legal Amazon is geopoltical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: (<https://en.wikipedia.org/wiki/Legal_Amazon>)
+Shapefile with the Legal Amazon Limits and the State Boundaries. Legal Amazon is geopoltical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: (<https://en.wikipedia.org/wiki/Legal_Amazon>)
 
 ### Inspirational Graphics
 
