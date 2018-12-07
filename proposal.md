@@ -78,18 +78,13 @@ CRS: LongLat (coordinate system), WGS84 (datum), not projected
 - RMarkdown writeup, with final submission as a nicely formatted PDF document that includes code and results.
 - Overall clean and clear presentation of repository, code, and explanations.
 
-### and probably include the following skills (in bold):
+### and probably include the following skills (in bold): specify lines and what I did
 
 - **Use of at least 5 `dplyr` verbs / functions**
 - **Writing / working with custom R functions**
-- Creating an R package for functions used in the analysis
-- Interaction with an API
-- Use of regular expressions
-- Use of an external relational database
-- Preparing processed data for archiving / publication
-- Parsing extensible data formats (JSON, XML)
+- **Use of regular expressions**
+- **Parsing extensible data formats (JSON, XML)**
 - **Use of spatial vector data (`sf` package) and visualization of spatial data**
-- Creation of an R package
 - **Expansion of ggplot functions (to include more than default characteristics)**
 - **Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentaiton**
 - **use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)**
@@ -119,16 +114,3 @@ Rosa, Isabel MD, Carlos Souza Jr, and Robert M. Ewers. "Changes in size of defor
 	 - 7pts: adequate 1 q, meeting 3 supplementary objectives
 	 - 5pts: adequate 1q, meeting 1-2 supplementary objectives
 
-## Doubts
-
-- Problem with travis, tried many different travis_wait times but always fail. Show examples.
-
-- Plots. General Feedback. More clean maps after presenting the region.
-
-- Pdf output, saw discussion on piazza about params, but in this case the only thig that would change is the presence of code, but the text explaining the code would remain. What I was thinking about doing is just create a second Rmd with pdf_output and not only add include = FALSE, but also modify the write-up to focus more on the results and not in the reading/cleaning process of the code.
-
-- What is considered expansion of ggplot?
-
-- How to create package with the functions?
-
-- Ask about lint. Need to follow every marker? Adjustments for more white space. Complaining about more than 80 character, how to add comments by line?
