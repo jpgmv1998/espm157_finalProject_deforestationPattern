@@ -215,7 +215,7 @@ if (!dir.exists(paths = clean_data_dir)) {
 
 ### Load clean data
 ```{r}
-load(file.path(clean_data_dir, "def_clean_df.Rdata"))
+load(file.path(clean_data_dir, "def_clean_df.Rdata")) # same as def_clean but without the geometry, just dataframe
 
 load(file.path(clean_data_dir, "def_clean.Rdata"))
 
@@ -225,7 +225,7 @@ gc(verbose = F) # free memory
 ```
 
 
-### Deforestation Trends by size of cleared patch 
+### 1. Deforestation Trends by size of cleared patch 
 
 Inspired by **Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)**
 ![](../images/deforestation_increment_sizes.png)
@@ -504,7 +504,7 @@ rm(def_clean_df)
         legend.position = "bottom")
  
  
- map1 <- 
+ map3 <- 
   def_clean %>%
   filter(prodes_year_increment >= 2010 & prodes_year_increment <= 2014) %>%
   mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
@@ -526,8 +526,6 @@ rm(def_clean_df)
         axis.line = element_blank(), axis.ticks = element_blank(),
         axis.title = element_blank(), axis.text = element_blank(),
         legend.position = "bottom")
-
-
 
 grid.arrange(map1, map2, map3, ncol = 1)
 
