@@ -221,7 +221,7 @@ load(file.path(clean_data_dir, "def_clean.Rdata"))
 
 load(file.path(clean_data_dir, "la_clean.Rdata"))
 
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
 
@@ -257,7 +257,7 @@ ggplot(aes(x = prodes_year_increment, y = def, fill = size)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
 
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
 **Fig. 2 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)**
@@ -326,7 +326,7 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 
 grid.arrange(panel_a, panel_b, ncol = 1)
 
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
 
@@ -345,7 +345,7 @@ cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>%
   labs(x = "Lon", y = "Lat", title = "Map of Legal Amazon - State Boundaries") +
   theme_bw()
 
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
 
@@ -378,7 +378,7 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom", strip.background = element_rect(fill=NA))
 
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
 
@@ -412,7 +412,7 @@ ggplot() +
         axis.title = element_blank(), axis.text = element_blank(), 
         legend.position = "bottom", legend.key.width = unit(4, "cm"))
 
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
 
@@ -442,7 +442,7 @@ ggplot() +
         axis.title = element_blank(), axis.text = element_blank(),
         legend.position = "bottom", legend.key.width = unit(4, "cm"))
 
-gc() # free memory
+gc(verbose = F) # free memory
 rm(def_clean_df)
 ```
 
@@ -463,7 +463,7 @@ list_maps <- map2(.x = year_initial, .y = year_final, map_polyg_distrib)
 grid.arrange(list_maps[[1]], list_maps[[2]], list_maps[[3]], ncol = 1)
 
 rm(def_clean, la_clean)
-gc()
+gc(verbose = F) # free memory
 ```
 
 

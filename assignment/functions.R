@@ -75,7 +75,7 @@ clean_data_dir <- "data_clean"
 raw_data_dir <- "data_input"
 
 # GGPLOTs
-map_polyg_distrib <- function(year_initial, year_final) {
+map_polyg_distrib <- function(def_clean = def_clean, year_initial, year_final, la_clean = la_clean) {
 
   # CREATES MAP OF POLYGONS DISTRIBUTION BY SIZE FOR SPECIFIC TIME INTERVAL
   #
