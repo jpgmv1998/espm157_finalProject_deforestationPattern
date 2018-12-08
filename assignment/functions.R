@@ -74,52 +74,6 @@ crs_SIRGAS2000albers <- "+proj=aea +lat_1=-2 +lat_2=-22 +lat_0=-12 +lon_0=-54 +x
 clean_data_dir <- "data_clean"
 raw_data_dir <- "data_input"
 
-# GGPLOTs
-map_polyg_distrib <- function(year_initial, year_final, data_clean, la_clean) {
-
-  # CREATES MAP OF POLYGONS DISTRIBUTION BY SIZE FOR SPECIFIC TIME INTERVAL
-  #
-  # ARGS
-  #   year_initial:  first year of the interval (numeric)
-  #   year_final: last year of the interval (numeric)
-  #
-  # RETURN
-  # unzipped folders in equivalent directory structure
-
-  if(!is.numeric(year_initial)) {
-    print("Error: year_initial should be numeric")
-    stop()
-  }
-
-  if(!is.numeric(year_final)) {
-    print("Error: year_final should be numeric")
-    stop()
-  }
-
-  def_clean %>%
-  filter(prodes_year_increment >= year_initial & prodes_year_increment <= year_final) %>%
-  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
-  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>%
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>%
-  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>%
-  group_by(state_uf, size) %>%
-  st_union(by_feature = T) %>%
-  ungroup() %>%
-  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
-  filter(state_uf == "AC") %>%
-  ggplot() +
-  geom_sf(aes(col = size, fill = size), size = 1.05) +
-  geom_sf(data = la_clean, fill = NA) +
-  ggtitle(paste0("Distribution of deforested patches by size (", year_initial,"-", year_final, ")")) +
-  theme(panel.grid.major = element_line(colour = "White"),
-        panel.grid.minor = element_line(colour = "white"),
-        panel.background = element_blank(),
-        strip.background = element_rect(fill = NA),
-        axis.line = element_blank(), axis.ticks = element_blank(),
-        axis.title = element_blank(), axis.text = element_blank(),
-        legend.position = "bottom")
-
-}
 
 
 # END OF SCRIPT --------------------------------------------------------------------------------------------------------------------------------------

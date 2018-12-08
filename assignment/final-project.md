@@ -5,6 +5,22 @@ December 9, 2018
 
 Following [Rosa et al. (2012)](https://doi.org/10.1111/j.1523-1739.2012.01901.x) and [Assunção et al. (2017)](https://doi.org/10.1016/j.landusepol.2017.04.022), I am going to analyze how the deforestation pattern changed from 2002 through 2014 in the Legal Amazon. I will focus on three main elements: the trends of the deforestation by polygon size, the heterogeneity across state patterns, and the spatial distribution of the polygons over time. In 2004, the Brazilian Government implemented a satellite-based system that provides near-real-time alerts of deforestation (DETER) to inform law enforcement operations against illegal deforestation of tropical forest in the Amazon. However, this system can only detect clearings of a contiguous area bigger than 25 ha, so patches below this threshold are invisible to DETER and this information is public. Thus, the hypothesis is that DETER created an incentive to deforesters strategically adapt their behavior to deforest in small patches and thus impacted the distribution of the polygons size. Also, in 2008, there was a second turning point on conservation policies with the creation of a blacklist that allowed law enforcement to better target their efforts on municipalities with high rates of recent deforestation. Identifying a causal relationship between these policies changes and the deforestation trends is out of the scope of this report, what we are aiming to show here is a descriptive analysis of the deforestation pattern, considering time, state, and cleared patch size variation.
 
+We will use the following spatial data (shapefiles):
+
+**1. [Annual Deforestation Polygons \[2002-2014\]](http://www.dpi.inpe.br/prodesdigital/dadosn/2014)**
+
+It contains the annual deforestation series of the Brazilian Amazon. Multiple shapefiles, one for each Landsat mosaic scene.
+
+We use the 2014 file because we can recover all the previous year information from this mask. The shapefiles contains polygons of other land cover categories besides deforestation that won't be used in this analysis, like forest and hydrography.
+
+CRS: LongLat (coordinate system), SAD69\_pre96\_BRonly (datum), not projected
+
+**2. [Legal Amazon and State Boundaries](http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip)**
+
+Shapefile with the Legal Amazon Limits and the State Boundaries. Legal Amazon is geopoltical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: (<https://en.wikipedia.org/wiki/Legal_Amazon>)
+
+CRS: LongLat (coordinate system), WGS84 (datum), not projected
+
 ### Loading Libraries
 
 ``` r
@@ -19,7 +35,7 @@ library(stringr)      # for working with strings replacement
 
 ### Functions
 
-The function used in this analysis are stored in (<https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/functions.R>) an R script repository
+The function used in this analysis are stored in an [R script repository](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/functions.R)
 
 ``` r
 source("functions.R")
@@ -27,17 +43,21 @@ source("functions.R")
 
 ### Data Download
 
-We will use the following spatial data (shapefiles):
+The downloading and cleaning process are long so there are two options:
 
-**1. Annual Deforestation Polygons \[2002-2014\]** **2. Legal Amazon and State Boundaries**
+**1. Download the cleaned data directly from the project github** \[default\]
+
+**2. Download data from original source and follow the whole process**
+
+Both options are available on this script, but as default the first one will be used. The second one is entirely available just below this code chunk.
 
 ``` r
+# 1. Download the cleaned data directly from the project github [default]
 # To avoid Travis from timing out and to allow a faster way to run this code I saved the necessary data >
-# after the downloading and cleaning and uploaded to GitHUb >
-# (https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/tag/data) >
+# after the downloading and cleaning and uploaded to [GitHUb](https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/tag/data) >
 # but for reproducibility purporses I kept all the necessary code here but their evaluation >
 # are conditioned to the non-existence of the data_clean folder which is created in this chunk. >
-# If you want to reproduce from scratch it is necessary to toggle of this chunk.
+# If you want to reproduce from scratch it is necessary to toggle off this chunk.
 if (!dir.exists(paths = clean_data_dir)) {
   # set url
   clean_data_url_index <- "https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/download/data/data_clean.zip"
@@ -56,6 +76,8 @@ if (!dir.exists(paths = clean_data_dir)) {
 #### Deforestation
 
 ``` r
+# 2. Download data from original source and follow the whole process
+
 if (!dir.exists(paths = clean_data_dir)) {
   # web address setup
   raw_data_url_index <- "http://www.dpi.inpe.br/prodesdigital/dadosn/2014/"
@@ -87,6 +109,8 @@ if (!dir.exists(paths = clean_data_dir)) {
 #### Legal Aamazon - State Boundaries
 
 ``` r
+# 2. Download data from original source and follow the whole process
+
 if (!dir.exists(paths = clean_data_dir)) {
   if (!file.exists(file.path(raw_data_dir, "UF_AmLeg_LLwgs84"))) { # only download data if there is not a local copy
     raw_data_url_index_2 <- "http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip" # set url 
@@ -143,6 +167,8 @@ if (!dir.exists(paths = clean_data_dir)) {
 #### Legal Aamazon - State Boundaries
 
 ``` r
+# 2. Download data from original source and follow the whole process
+
 if (!dir.exists(paths = clean_data_dir)) {
   if (!any(list.files(clean_data_dir) == "la_clean.Rdata")) { # check if def_clean.Rdata already exists locally
   
@@ -185,12 +211,12 @@ load(file.path(clean_data_dir, "def_clean.Rdata"))
 
 load(file.path(clean_data_dir, "la_clean.Rdata"))
 
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
     ##             used  (Mb) gc trigger   (Mb)  max used  (Mb)
-    ## Ncells  11757099 627.9   17524874  936.0  11770915 628.7
-    ## Vcells 130791505 997.9  185741186 1417.1 130813660 998.1
+    ## Ncells  11757136 627.9   17525772  936.0  11770943 628.7
+    ## Vcells 130792265 997.9  185746959 1417.2 130814419 998.1
 
 ### Deforestation Trends by size of cleared patch
 
@@ -228,12 +254,12 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-8-1.png)
 
 ``` r
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
     ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  11905568  635.9   17524874  936.0  13573781  725.0
-    ## Vcells 131093814 1000.2  222969423 1701.2 158566376 1209.8
+    ## Ncells  11905603  635.9   17525772  936.0  13573807  725.0
+    ## Vcells 131094573 1000.2  222976350 1701.2 158567163 1209.8
 
 **Fig. 2 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)** <br> ![](../images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
 
@@ -302,12 +328,13 @@ grid.arrange(panel_a, panel_b, ncol = 1)
 ![](final-project_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
-gc() # free memory
+rm(panel_a, panel_b) # remove unnecessary objects
+gc(verbose = F) # free memory
 ```
 
     ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  11991786  640.5   17524874  936.0  15157389  809.5
-    ## Vcells 131265470 1001.5  222969423 1701.2 222961671 1701.1
+    ## Ncells  11990779  640.4   17525772  936.0  15232142  813.5
+    ## Vcells 131264061 1001.5  222976350 1701.2 222963989 1701.1
 
 ### State Heterogeneity
 
@@ -327,12 +354,12 @@ cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>%
 ![](final-project_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 ``` r
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
     ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  11949237  638.2   17524874  936.0  15157389  809.5
-    ## Vcells 131259103 1001.5  222969423 1701.2 222961671 1701.1
+    ## Ncells  11946932  638.1   17525772  936.0  15232142  813.5
+    ## Vcells 131254813 1001.4  222976350 1701.2 222963989 1701.1
 
 #### Plot of proportion of polygons by cleared patch through time by state.
 
@@ -366,12 +393,12 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-11-1.png)
 
 ``` r
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
     ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  12074586  644.9   17524874  936.0  17524874  936.0
-    ## Vcells 131424000 1002.7  222969423 1701.2 222961671 1701.1
+    ## Ncells  12072301  644.8   17525772  936.0  17525772  936.0
+    ## Vcells 131419732 1002.7  222976350 1701.2 222963989 1701.1
 
 #### Maps of the proportion of small polygons across years
 
@@ -407,12 +434,12 @@ ggplot() +
 ![](final-project_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ``` r
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
     ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  12008080  641.4   17524874  936.0  17524874  936.0
-    ## Vcells 132456607 1010.6  222969423 1701.2 222961671 1701.1
+    ## Ncells  12005788  641.2   17525772  936.0  17525772  936.0
+    ## Vcells 132452332 1010.6  222976350 1701.2 222963989 1701.1
 
 #### Maps of the ratio of total deforestation and state area across years
 
@@ -444,12 +471,12 @@ ggplot() +
 ![](final-project_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 ``` r
-gc() # free memory
+gc(verbose = F) # free memory
 ```
 
     ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  12008023  641.3   17524874  936.0  17524874  936.0
-    ## Vcells 132455654 1010.6  222969423 1701.2 222961671 1701.1
+    ## Ncells  12005731  641.2   17525772  936.0  17525772  936.0
+    ## Vcells 132451380 1010.6  222976350 1701.2 222963989 1701.1
 
 ``` r
 rm(def_clean_df)
@@ -462,21 +489,44 @@ rm(def_clean_df)
 ![](../images/deforestation_map_bySize_rosa_et_al_2012.png)
 
 ``` r
-year_initial <- list(2002, 2005, 2010)
-year_final   <- list(2004, 2009, 2014)
+#year_initial <- list(2002, 2005, 2010)
+#year_final   <- list(2004, 2009, 2014)
 
-list_maps <- map2(.x = year_initial, .y = year_final, map_polyg_distrib)
+#list_maps <- map2(.x = year_initial, .y = year_final, map_polyg_distrib, data_clean = data_clean, la_clean = la_clean)
 
-grid.arrange(list_maps[[1]], list_maps[[2]], list_maps[[3]], ncol = 1)
+#grid.arrange(list_maps[[1]], list_maps[[2]], list_maps[[3]], ncol = 1)
+
+ def_clean %>%
+  filter(prodes_year_increment >= 2002 & prodes_year_increment <= 2004) %>%
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>%
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>%
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>%
+  group_by(state_uf, size) %>%
+  st_union(by_feature = T) %>%
+  ungroup() %>%
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+  filter(state_uf == "AC") %>%
+  ggplot() +
+  geom_sf(aes(col = size, fill = size), size = 1.05) +
+  geom_sf(data = la_clean, fill = NA) +
+  ggtitle(paste0("Distribution of deforested patches by size (", 2002,"-", 2004, ")")) +
+  theme(panel.grid.major = element_line(colour = "White"),
+        panel.grid.minor = element_line(colour = "white"),
+        panel.background = element_blank(),
+        strip.background = element_rect(fill = NA),
+        axis.line = element_blank(), axis.ticks = element_blank(),
+        axis.title = element_blank(), axis.text = element_blank(),
+        legend.position = "bottom")
 ```
 
 ![](final-project_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 ``` r
 rm(def_clean, la_clean)
-gc()
+gc(verbose = F) # free memory
 ```
 
     ##            used  (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  6643557 354.9   21822721 1165.5  27278402 1456.9
-    ## Vcells 23933981 182.7  214114645 1633.6 222969276 1701.2
+    ## Ncells  4057840 216.8   21816353 1165.2  27270442 1456.4
+    ## Vcells 12325297  94.1  178381080 1361.0 222963989 1701.1
