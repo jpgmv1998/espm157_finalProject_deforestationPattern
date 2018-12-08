@@ -61,8 +61,10 @@ gc(verbose = F) # free memory
 
 First of all, we are going to explore the evolution of the deforestation across the period of interest (2002-2014), splitting the deforestation increment into two categories: small polygons (contiguous area smaller than 25 hectars) and large polygons (contiguous area greater than 25 hectars). This analysis is inspired by: 
 
-**Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)**
-![](../images/deforestation_increment_sizes.png)
+```{r include=T, fig.cap="Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)", out.width = '100%'}
+knitr::include_graphics("../images/deforestation_increment_sizes.png")
+```
+
 ```{r def_trends_polyg_size_1}
 
 ```
@@ -71,8 +73,10 @@ As we can see in both graphs above, there war sharp falls in the deforestation a
 
 For completeness we also reproduce:
 
-**Fig. 2 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)**
-![](../images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
+```{r include=T, fig.cap="(a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)", out.width = '100%'}
+knitr::include_graphics("../images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png")
+```
+
 
 ```{r def_trends_polyg_size_2, fig.height = 10}
 
@@ -84,7 +88,9 @@ These plots allows us to explore the trends for more categories and also look at
 
 Secondly, we want to explore the variation of these trends acrosse the states, to check for the presence of outliers and heterogeneity. As argued by (ref1), regional heterogeneities require the policies to be tailored to maximize its efficiency. Inspired by: 
 
-**Fig. 3 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assunção et al., 2017)**![](../images/deforestation_percentage_byState_byYear_bySize.png)
+```{r include=T, fig.cap="Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assunção et al., 2017))", out.width = '100%'}
+knitr::include_graphics("../images/deforestation_percentage_byState_byYear_bySize.png")
+```
 
 In this case, we cannot reproduce the content of Fig. 3 entirely because we do not have assess to registered properties information, on the other hand, we expand their analysis to cover all the Legal Amazon States instead of only two. In practice, we cannot link the polygon size with the type of agent (small, medium or large properties) but we can have a better notion of the heterogeneity of the deforestation by size. 
 
@@ -112,9 +118,11 @@ From these visualizations we can conclude that there are persistent differences 
 
 Finally, we want to take advantage that we have spatial data at the polygon level to observe the spatial distribution of the deforestation by polygon size in different time periods, first a period of fast increase in deforestation rate (2002-2004), then a period of fast decrease (2005-2009) and lastly a period of relative stabilization (2010-2014). Inspired by:
 
-**Fig. 4 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)**
 
-![](../images/deforestation_map_bySize_rosa_et_al_2012.png)
+```{r include=T, fig.cap="Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)", out.width = '100%'}
+knitr::include_graphics(".../images/deforestation_map_bySize_rosa_et_al_2012.png")
+```
+
 
 ```{r polyg_distrib, fig.height = 20}
 
