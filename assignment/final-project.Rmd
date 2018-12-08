@@ -456,12 +456,36 @@ rm(def_clean_df)
 
 ```{r fig.height = 20}
 
-year_initial <- list(2002, 2005, 2010)
-year_final   <- list(2004, 2009, 2014)
+#year_initial <- list(2002, 2005, 2010)
+#year_final   <- list(2004, 2009, 2014)
 
-list_maps <- map2(.x = year_initial, .y = year_final, map_polyg_distrib, data_clean = data_clean, la_clean = la_clean)
+#list_maps <- map2(.x = year_initial, .y = year_final, map_polyg_distrib, data_clean = data_clean, la_clean = la_clean)
 
-grid.arrange(list_maps[[1]], list_maps[[2]], list_maps[[3]], ncol = 1)
+#grid.arrange(list_maps[[1]], list_maps[[2]], list_maps[[3]], ncol = 1)
+
+ def_clean %>%
+  filter(prodes_year_increment >= 2002 & prodes_year_increment <= 2004) %>%
+  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
+  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>%
+  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>%
+  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>%
+  group_by(state_uf, size) %>%
+  st_union(by_feature = T) %>%
+  ungroup() %>%
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+  filter(state_uf == "AC") %>%
+  ggplot() +
+  geom_sf(aes(col = size, fill = size), size = 1.05) +
+  geom_sf(data = la_clean, fill = NA) +
+  ggtitle(paste0("Distribution of deforested patches by size (", year_initial,"-", year_final, ")")) +
+  theme(panel.grid.major = element_line(colour = "White"),
+        panel.grid.minor = element_line(colour = "white"),
+        panel.background = element_blank(),
+        strip.background = element_rect(fill = NA),
+        axis.line = element_blank(), axis.ticks = element_blank(),
+        axis.title = element_blank(), axis.text = element_blank(),
+        legend.position = "bottom")
+
 
 rm(def_clean, la_clean)
 gc(verbose = F) # free memory
