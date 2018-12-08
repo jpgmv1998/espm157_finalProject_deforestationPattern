@@ -78,15 +78,46 @@ CRS: LongLat (coordinate system), WGS84 (datum), not projected
 - RMarkdown writeup, with final submission as a nicely formatted PDF document that includes code and results.
 - Overall clean and clear presentation of repository, code, and explanations.
 
-### and probably include the following skills (in bold): specify lines and what I did
+### and include the following skills: 
 
-- **Use of at least 5 `dplyr` verbs / functions**
+- **Use of `dplyr` verbs / functions**
+
+Verbs used: 
+
+1) `filter`
+2) `group_by`
+3) `mutate`
+4) `summarise`
+5) `rename`
+6) `select`
+7) `ungroup`
+8) `right_join`
+9) `if_else`
+
 - **Writing / working with custom R functions**
+
+See [function.R](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/functions.R) repository.
+
 - **Use of regular expressions**
+
+Use of `str_replace`, `grep`, `str_sub`.
+
 - **Parsing extensible data formats (JSON, XML)**
+
+Use of `htmlParse`, `getNodeSet`, `xmlGetAttr`. Lines 102-112. Download of deforestation data.
+
 - **Use of spatial vector data (`sf` package) and visualization of spatial data**
+
+Use of `st_read`, `geom_sf`, `st_coordinates`, `st_centroid`, `st_transform`, `st_set_crs`, `st_area`, and `st_union`. 
+
 - **Expansion of ggplot functions (to include more than default characteristics)**
-- **Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentaiton**
+
+Use of `scale_fill_manual`, `scale_x_continuous`, `scale_y_continuous`, many `theme` options, `labs`, `scale_x_discrete`, `facet_wrap`, and `scale_fill_distiller`.
+
+- **Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentation**
+
+See [final-project-concise-version.Rmd](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/final-project-concise-version.Rmd)
+
 - **use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)**
 
 ### References
