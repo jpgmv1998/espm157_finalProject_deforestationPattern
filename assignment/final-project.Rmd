@@ -187,7 +187,7 @@ if (!dir.exists(paths = clean_data_dir)) {
     subfolder_name <- str_replace(pattern = "UF", replacement = "UFS", string = folder_name) # subfolder name is very similar to the folder name
     
     layer_name <-     # layer name is very similar to the subfolder name
-      toupper(subfolder_name) %>% 
+      str_to_upper(subfolder_name) %>% 
       str_replace(pattern = "AMLEG", replacement = "AMZLEG")
   
     
@@ -227,13 +227,15 @@ gc(verbose = F) # free memory
 
 ### 1. Deforestation Trends by size of cleared patch 
 
-Inspired by **Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)**
+First of all, we are going to explore the evolution of the deforestation across the period of interest (2002-2014), splitting the deforestation increment into two categories: small polygons (contiguous area smaller than 25 hectars) and large polygons (contiguous area greater than 25 hectars). This analysis is inspired by: 
+
+**Fig. 1 - Amazon deforestation by the size of cleared forest patch, 2002–2012 - (Assunção et al., 2017)**
 ![](../images/deforestation_increment_sizes.png)
-```{r}
+```{r def_trends_polyg_size_1}
 def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2002) %>% 
-  mutate(size = ifelse(area < 25, "small", "large")) %>% 
+  mutate(size = if_else(area < 25, "small", "large")) %>% 
   group_by(state_uf, prodes_year_increment, size) %>% 
   summarise(area_bysize = sum(area)) %>% 
   spread(key = size, value = area_bysize) %>% 
@@ -260,24 +262,27 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 gc(verbose = F) # free memory
 ```
 
+As we can see in both graphs above, there war sharp falls in the deforestation after both anti-deforestation policies turning points (2004 and 2008), however as pointed out by (ref1) it seems to have impacted more the large polygons, increasing the relevance of small polygons. Linking this descriptive evidence with the fact that the satellite-based monitoring system can only detect the large cleared patches and that this limitation was public information, there might be a strategic behavior adaptation by deforesters explaining it. Our plot is a reproduction of (ref1) graph, but expanding to include two more years. This inclusion doesn't change the overall interpretation, only shows that the levels are somewhat constant, with a small increase similar for both groups.
+
+For completeness we also reproduce:
+
 **Fig. 2 - (a) Percentage and (b) area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009. - (Rosa et al., 2012)**
 <br>
 ![](../images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
 
-```{r fig.height = 10}
+```{r def_trends_polyg_size_2, fig.height = 10}
 
 panel_a <- 
   def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2002) %>% 
-  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
-  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
-  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>% 
   group_by(state_uf, prodes_year_increment, size) %>% 
   summarise(area_bysize = sum(area)) %>% 
   ungroup() %>% 
-  mutate(area_bysize = area_bysize/10000) %>% 
   mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% 
   mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>% 
 
@@ -288,8 +293,8 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
   labs(x = "Year", 
        y = "Deforestation Share",
        title = "Deforestation Trends by Polygon Size",  
-       subtitle = "Inspired by Figure 1 - (a) - Rosa et al. (2012)",
-       caption = "Notes: Reproducing Fig.1 (a) from Rosa et al. (2012) expanding time period to include 5 more years and different patches.\n The figure illustrates the share of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009.") +
+       subtitle = "Inspired by Figure 2 - (a) - Rosa et al. (2012)",
+       caption = "Notes: Reproducing Fig.2 (a) from Rosa et al. (2012) expanding time period to include 5 more years and different patches.\n The figure illustrates the share of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2014.") +
   scale_x_discrete(breaks = c(2002:2014), expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
@@ -299,10 +304,10 @@ panel_b <-
   def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2002) %>% 
-  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
-  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
-  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>% 
   group_by(state_uf, prodes_year_increment, size) %>% 
   summarise(area_bysize = sum(area)) %>% 
   ungroup() %>% 
@@ -317,8 +322,8 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
   labs(x = "Year", 
        y = "Deforestation rate (10,000 ha/yr)",
        title = "Deforestation Trends by Polygon Size",  
-       subtitle = "Inspired by Figure 1 - (b) - Rosa et al. (2012)",
-       caption = "Notes: Reproducing Fig.1 (b) from Rosa et al. (2012) expanding time period to include 5 more years and different patches.\n The figure illustrates area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2009.") +
+       subtitle = "Inspired by Figure 2 - (b) - Rosa et al. (2012)",
+       caption = "Notes: Reproducing Fig.2 (b) from Rosa et al. (2012) expanding time period to include 5 more years and different patches.\n The figure illustrates area of deforested patches of different sizes in the Brazilian Amazon from 2002 through 2014.") +
   scale_x_discrete(breaks = c(2002:2014)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
@@ -330,15 +335,20 @@ rm(panel_a, panel_b) # remove unnecessary objects
 gc(verbose = F) # free memory
 ```
 
+These plots allows us to explore the trends for more categories and also look at the shares and not only the nominal increment. In our reproduction we expand it to include 5 more years and use the size intervals based on (ref1) to separate the policy relevant category of (<25ha). Looking at the shares we can see a sistematic increase in the share of small polygons (<25 ha) until 2010, after that there is a decrease but remaining as the majority proportion. The share is calculated as the ratio of the  deforestation generated by the polygon size category and the total deforestation, for each year.
 
-### State Heterogeneity  
+### 2. State Heterogeneity  
 
-Inspired by **Fig. 3 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assunção et al., 2017)**
-![](../images/deforestation_percentage_byState_byYear_bySize.png)
+Secondly, we want to explore the variation of these trends acrosse the states, to check for the presence of outliers and heterogeneity. As argued by (ref1), regional heterogeneities require the policies to be tailored to maximize its efficiency. Inspired by: 
+
+**Fig. 3 - Deforestation inside registered properties by property and cleared patch size, 2002–2012. - (Assunção et al., 2017)**![](../images/deforestation_percentage_byState_byYear_bySize.png)
+
+In this case, we cannot reproduce the content of Fig. 3 entirely because we do not have assess to registered properties information, on the other hand, we expand their analysis to cover all the Legal Amazon States instead of only two. In practice, we cannot link the polygon size with the type of agent (small, medium or large properties) but we can have a better notion of the heterogeneity of the deforestation by size. 
 
 #### Simple Plot of State Boundaries and UFs
 
-```{r}
+For starters we do a exploratory plot, to show the Legal Amazon region and its states.
+```{r la_states}
 cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>% 
   ggplot() +
   geom_sf(fill = NA) +
@@ -353,14 +363,15 @@ gc(verbose = F) # free memory
 
 #### Plot of proportion of polygons by cleared patch through time by state.
 
-```{r fig.height=12, fig.width=10}
+For a complete notion of what's happening in each state we plot the proportion of the 4 sizes categories for each year.
+```{r la_states_polyg_prop_1, fig.height=12, fig.width=10}
 def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2002) %>% 
-  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
-  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>% 
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>% 
-  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>% 
+  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>% 
+  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>% 
+  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>% 
   group_by(state_uf, prodes_year_increment, size) %>% 
   summarise(area_bysize = sum(area)) %>% 
   ungroup() %>% 
@@ -382,14 +393,17 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 gc(verbose = F) # free memory
 ```
 
+We see that there are states such as AC and AP with almost all the deforestation coming from small polygons, contrasting with states like MT were larger polygons are more relevant. As expected for most of the states, small polygons increased their relevance becoming the majority, yet the presence of other patterns supports the idea of tailored policy to adjust the polcies accordingly to the local pattern instead of treating the whole region as unique and uniform. 
 
 #### Maps of the proportion of small polygons across years
 
-```{r fig.height = 14, fig.width = 12}
+
+To complement the last plot we also focus only on the share of small polygons and the share of the State Deforested area to have a better visualization of the state-differences in each year.
+```{r la_states_polyg_prop_2, fig.height = 14, fig.width = 12}
 def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2002) %>% 
-  mutate(size = ifelse(area < 25, "small", "large")) %>% 
+  mutate(size = if_else(area < 25, "small", "large")) %>% 
   group_by(state_uf, prodes_year_increment, size) %>% 
   summarise(area_bysize = sum(area)) %>% 
   spread(key = size, value = area_bysize) %>% 
@@ -419,7 +433,7 @@ gc(verbose = F) # free memory
 
 #### Maps of the ratio of total deforestation and state area across years
 
-```{r fig.height = 14, fig.width = 12}
+```{r la_states_def_prop, fig.height = 14, fig.width = 12}
 def_clean_df %>% 
   group_by(prodes_year_increment) %>% 
   filter(prodes_year_increment >= 2002) %>% 
@@ -447,22 +461,26 @@ gc(verbose = F) # free memory
 rm(def_clean_df)
 ```
 
+From these visualizations we can conclude that there are persistent differences across the states for any given year for both measures, even though there is a common trends of less total deforestation and more presence of small cleared patches.
 
-### Spatial Distribution of deforestation by cleared patch size across time (2002-2014) - create function to just change the start and end year
+
+### 3. Spatial Distribution of deforestation by cleared patch size across time (2002-2014) - create function to just change the start and end year
+
+Finally, we want to take advantage that we have spatial data at the polygon level to observe the spatial distribution of the deforestation by polygon size in different time periods, first a period of fast increase in deforestation rate (2002-2004), then a period of fast decrease (2005-2009) and lastly a period of relative stabilization (2010-2014). Inspired by:
 
 **Fig. 4 - Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)**
 
 ![](../images/deforestation_map_bySize_rosa_et_al_2012.png)
 
-```{r fig.height = 20}
+```{r polyg_distrib, fig.height = 20}
 
  map1 <- 
   def_clean %>%
   filter(prodes_year_increment >= 2002 & prodes_year_increment <= 2004) %>%
-  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
-  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>%
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>%
-  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>%
+  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
+  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
+  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
   group_by(state_uf, size) %>%
   st_union(by_feature = T) %>%
   ungroup() %>%
@@ -483,10 +501,10 @@ rm(def_clean_df)
  map2 <- 
   def_clean %>%
   filter(prodes_year_increment >= 2005 & prodes_year_increment <= 2009) %>%
-  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
-  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>%
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>%
-  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>%
+  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
+  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
+  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
   group_by(state_uf, size) %>%
   st_union(by_feature = T) %>%
   ungroup() %>%
@@ -507,10 +525,10 @@ rm(def_clean_df)
  map3 <- 
   def_clean %>%
   filter(prodes_year_increment >= 2010 & prodes_year_increment <= 2014) %>%
-  mutate(size = ifelse(area < 25, "<25 ha", NA)) %>%
-  mutate(size = ifelse(area >= 25 & area < 100, "25-100 ha", size)) %>%
-  mutate(size = ifelse(area >= 100 & area < 500, "100-500 ha", size)) %>%
-  mutate(size = ifelse(area >= 500, "> 500 ha", size)) %>%
+  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
+  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
+  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
   group_by(state_uf, size) %>%
   st_union(by_feature = T) %>%
   ungroup() %>%
@@ -533,6 +551,6 @@ rm(def_clean, la_clean)
 gc(verbose = F) # free memory
 ```
 
-
+### Conclusion
 
 
