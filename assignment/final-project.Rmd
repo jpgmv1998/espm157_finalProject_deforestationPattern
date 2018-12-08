@@ -33,7 +33,7 @@ source("functions.R")
 ### Data Download
 
 ```{r}
-
+# 
 if (!dir.exists(paths = clean_data_dir)) {
   # set url
   clean_data_url_index <- "https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/download/data/data_clean.zip"
@@ -176,11 +176,11 @@ if (!dir.exists(paths = clean_data_dir)) {
 
 ### Load clean data
 ```{r}
-load("data_clean/def_clean_df.Rdata")
+load(file.path(clean_data_dir, "def_clean_df.Rdata"))
 
-load("data_clean/def_clean.Rdata")
+load(file.path(clean_data_dir, "def_clean.Rdata"))
 
-load("data_clean/la_clean.Rdata")
+load(file.path(clean_data_dir, "la_clean.Rdata"))
 
 ```
 
@@ -479,6 +479,9 @@ ggplot() +
         legend.position = "bottom")
 
 grid.arrange(map_1, map_2, map_3, ncol = 1)
+
+rm(def_clean, def_clean_df, la_clean)
+gc()
 ```
 
 
