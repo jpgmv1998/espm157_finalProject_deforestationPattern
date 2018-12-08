@@ -477,7 +477,7 @@ rm(def_clean_df)
   ggplot() +
   geom_sf(aes(col = size, fill = size), size = 1.05) +
   geom_sf(data = la_clean, fill = NA) +
-  ggtitle(paste0("Distribution of deforested patches by size (", year_initial,"-", year_final, ")")) +
+  ggtitle(paste0("Distribution of deforested patches by size (", 2002,"-", 2004, ")")) +
   theme(panel.grid.major = element_line(colour = "White"),
         panel.grid.minor = element_line(colour = "white"),
         panel.background = element_blank(),
