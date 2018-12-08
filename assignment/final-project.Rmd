@@ -326,6 +326,7 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 
 grid.arrange(panel_a, panel_b, ncol = 1)
 
+rm(panel_a, panel_b) # remove unnecessary objects
 gc(verbose = F) # free memory
 ```
 
