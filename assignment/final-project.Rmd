@@ -273,12 +273,11 @@ For completeness we also reproduce:
 ![](../images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
 
 ```{r def_trends_polyg_size_2, fig.height = 10}
-
 panel_a <-
 def_clean_df %>%
 group_by(prodes_year_increment) %>%
 filter(prodes_year_increment >= 2002) %>%
-mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
 mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
 mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
 mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
@@ -305,7 +304,7 @@ panel_b <-
 def_clean_df %>%
 group_by(prodes_year_increment) %>%
 filter(prodes_year_increment >= 2002) %>%
-mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
 mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
 mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
 mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
@@ -368,7 +367,7 @@ For a complete notion of what's happening in each state we plot the proportion o
 def_clean_df %>%
   group_by(prodes_year_increment) %>%
   filter(prodes_year_increment >= 2002) %>%
-  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
   mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
   mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
   mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
@@ -477,7 +476,7 @@ Finally, we want to take advantage that we have spatial data at the polygon leve
  map_1 <-
   def_clean %>%
   filter(prodes_year_increment >= 2002 & prodes_year_increment <= 2004) %>%
-  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
   mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
   mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
   mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
@@ -502,7 +501,7 @@ Finally, we want to take advantage that we have spatial data at the polygon leve
  map_2 <-
   def_clean %>%
   filter(prodes_year_increment >= 2005 & prodes_year_increment <= 2009) %>%
-  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
   mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
   mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
   mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
@@ -527,7 +526,7 @@ Finally, we want to take advantage that we have spatial data at the polygon leve
  map_3 <-
   def_clean %>%
   filter(prodes_year_increment >= 2010 & prodes_year_increment <= 2014) %>%
-  mutate(size = if_else(area < 25, "<25 ha", NA)) %>%
+  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
   mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
   mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
   mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
