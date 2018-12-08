@@ -471,83 +471,91 @@ Finally, we want to take advantage that we have spatial data at the polygon leve
 
 ![](../images/deforestation_map_bySize_rosa_et_al_2012.png)
 
-```{r polyg_distrib, fig.height = 20}
+```{r polyg_distrib, fig.height = 20, out.width="100%"}
+if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png")) {
+  
+  knitr::include_graphics("final-project_files/figure-markdown_github/polyg_distrib-1.png")
+  
+} else {
 
- map_1 <-
-  def_clean %>%
-  filter(prodes_year_increment >= 2002 & prodes_year_increment <= 2004) %>%
-  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
-  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
-  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
-  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
-  group_by(state_uf, size) %>%
-  st_union(by_feature = T) %>%
-  st_simplify() %>%
-  ungroup() %>%
-  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
-  ggplot() +
-  geom_sf(aes(col = size, fill = size), size = 1.05) +
-  geom_sf(data = la_clean, fill = NA) +
-  ggtitle(paste0("Distribution of deforested patches by size (", 2002, "-", 2004, ")")) +
-  theme(panel.grid.major = element_line(colour = "White"),
-        panel.grid.minor = element_line(colour = "white"),
-        panel.background = element_blank(),
-        strip.background = element_rect(fill = NA),
-        axis.line = element_blank(), axis.ticks = element_blank(),
-        axis.title = element_blank(), axis.text = element_blank(),
-        legend.position = "bottom")
+   map_1 <-
+    def_clean %>%
+    filter(prodes_year_increment >= 2002 & prodes_year_increment <= 2004) %>%
+    mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
+    mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
+    mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
+    mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
+    group_by(state_uf, size) %>%
+    st_union(by_feature = T) %>%
+    st_simplify() %>%
+    ungroup() %>%
+    mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+    ggplot() +
+    geom_sf(aes(col = size, fill = size), size = 1.05) +
+    geom_sf(data = la_clean, fill = NA) +
+    ggtitle(paste0("Distribution of deforested patches by size (", 2002, "-", 2004, ")")) +
+    theme(panel.grid.major = element_line(colour = "White"),
+          panel.grid.minor = element_line(colour = "white"),
+          panel.background = element_blank(),
+          strip.background = element_rect(fill = NA),
+          axis.line = element_blank(), axis.ticks = element_blank(),
+          axis.title = element_blank(), axis.text = element_blank(),
+          legend.position = "bottom")
+  
+  
+   map_2 <-
+    def_clean %>%
+    filter(prodes_year_increment >= 2005 & prodes_year_increment <= 2009) %>%
+    mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
+    mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
+    mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
+    mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
+    group_by(state_uf, size) %>%
+    st_union(by_feature = T) %>%
+    st_simplify() %>%
+    ungroup() %>%
+    mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+    ggplot() +
+    geom_sf(aes(col = size, fill = size), size = 1.05) +
+    geom_sf(data = la_clean, fill = NA) +
+    ggtitle(paste0("Distribution of deforested patches by size (", 2005, "-", 2009, ")")) +
+    theme(panel.grid.major = element_line(colour = "White"),
+          panel.grid.minor = element_line(colour = "white"),
+          panel.background = element_blank(),
+          strip.background = element_rect(fill = NA),
+          axis.line = element_blank(), axis.ticks = element_blank(),
+          axis.title = element_blank(), axis.text = element_blank(),
+          legend.position = "bottom")
+   
+   
+   map_3 <-
+    def_clean %>%
+    filter(prodes_year_increment >= 2010 & prodes_year_increment <= 2014) %>%
+    mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
+    mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
+    mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
+    mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
+    group_by(state_uf, size) %>%
+    st_union(by_feature = T) %>%
+    st_simplify() %>%
+    ungroup() %>%
+    mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+    ggplot() +
+    geom_sf(aes(col = size, fill = size), size = 1.05) +
+    geom_sf(data = la_clean, fill = NA) +
+    ggtitle(paste0("Distribution of deforested patches by size (", 2010, "-", 2014, ")")) +
+    theme(panel.grid.major = element_line(colour = "White"),
+          panel.grid.minor = element_line(colour = "white"),
+          panel.background = element_blank(),
+          strip.background = element_rect(fill = NA),
+          axis.line = element_blank(), axis.ticks = element_blank(),
+          axis.title = element_blank(), axis.text = element_blank(),
+          legend.position = "bottom")
+  
+  grid.arrange(map_1, map_2, map_3, ncol = 1)
+  
+}
 
-
- map_2 <-
-  def_clean %>%
-  filter(prodes_year_increment >= 2005 & prodes_year_increment <= 2009) %>%
-  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
-  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
-  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
-  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
-  group_by(state_uf, size) %>%
-  st_union(by_feature = T) %>%
-  st_simplify() %>%
-  ungroup() %>%
-  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
-  ggplot() +
-  geom_sf(aes(col = size, fill = size), size = 1.05) +
-  geom_sf(data = la_clean, fill = NA) +
-  ggtitle(paste0("Distribution of deforested patches by size (", 2005, "-", 2009, ")")) +
-  theme(panel.grid.major = element_line(colour = "White"),
-        panel.grid.minor = element_line(colour = "white"),
-        panel.background = element_blank(),
-        strip.background = element_rect(fill = NA),
-        axis.line = element_blank(), axis.ticks = element_blank(),
-        axis.title = element_blank(), axis.text = element_blank(),
-        legend.position = "bottom")
- 
- 
- map_3 <-
-  def_clean %>%
-  filter(prodes_year_increment >= 2010 & prodes_year_increment <= 2014) %>%
-  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
-  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
-  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
-  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
-  group_by(state_uf, size) %>%
-  st_union(by_feature = T) %>%
-  st_simplify() %>%
-  ungroup() %>%
-  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
-  ggplot() +
-  geom_sf(aes(col = size, fill = size), size = 1.05) +
-  geom_sf(data = la_clean, fill = NA) +
-  ggtitle(paste0("Distribution of deforested patches by size (", 2010, "-", 2014, ")")) +
-  theme(panel.grid.major = element_line(colour = "White"),
-        panel.grid.minor = element_line(colour = "white"),
-        panel.background = element_blank(),
-        strip.background = element_rect(fill = NA),
-        axis.line = element_blank(), axis.ticks = element_blank(),
-        axis.title = element_blank(), axis.text = element_blank(),
-        legend.position = "bottom")
-
-grid.arrange(map_1, map_2, map_3, ncol = 1)
 
 rm(def_clean, la_clean)
 gc(verbose = F) # free memory
@@ -556,8 +564,14 @@ gc(verbose = F) # free memory
 ### Conclusion
 
 
+### References 
+
+[Assunção, Juliano, Clarissa Gandour, Pedro Pessoa, and Romero Rocha. "Property-level assessment of change in forest clearing patterns: The need for tailoring policy in the Amazon." Land Use Policy 66 (2017): 18-27.](https://doi.org/10.1016/j.landusepol.2017.04.022)
+
+[Rosa, Isabel MD, Carlos Souza Jr, and Robert M. Ewers. "Changes in size of deforested patches in the Brazilian Amazon." Conservation Biology 26, no. 5 (2012): 932-937.](https://doi.org/10.1111/j.1523-1739.2012.01901.x)
+
 ```{r}
 # use of lintr to adjust style
-lintr::lint("final-project.Rmd")
+# lintr::lint("final-project.Rmd")
 ```
 
