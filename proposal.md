@@ -82,7 +82,7 @@ CRS: LongLat (coordinate system), WGS84 (datum), not projected
 
 - **Use of `dplyr` verbs / functions**
 
-Verbs used: 
+Verbs used: Multipe Linwa
 
 1) `filter`
 2) `group_by`
@@ -100,7 +100,7 @@ See [function.R](https://github.com/espm-157/final-project-individual-option-jpg
 
 - **Use of regular expressions**
 
-Use of `str_replace`, `grep`, `str_sub`.
+Use of `str_replace`, `grep`, `str_sub`. Multipe Lines.
 
 - **Parsing extensible data formats (JSON, XML)**
 
@@ -108,17 +108,19 @@ Use of `htmlParse`, `getNodeSet`, `xmlGetAttr`. Lines 102-112. Download of defor
 
 - **Use of spatial vector data (`sf` package) and visualization of spatial data**
 
-Use of `st_read`, `geom_sf`, `st_coordinates`, `st_centroid`, `st_transform`, `st_set_crs`, `st_area`, and `st_union`. 
+Use of `st_read`, `geom_sf`, `st_coordinates`, `st_centroid`, `st_transform`, `st_set_crs`, `st_area`, and `st_union`. Multiple Lines.
 
 - **Expansion of ggplot functions (to include more than default characteristics)**
 
-Use of `scale_fill_manual`, `scale_x_continuous`, `scale_y_continuous`, many `theme` options, `labs`, `scale_x_discrete`, `facet_wrap`, and `scale_fill_distiller`.
+Use of `scale_fill_manual`, `scale_x_continuous`, `scale_y_continuous`, many `theme` options, `labs`, `scale_x_discrete`, `facet_wrap`, and `scale_fill_distiller`. Multiple Lines.
 
 - **Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentation**
 
 See [final-project-concise-version.Rmd](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/final-project-concise-version.Rmd)
 
 - **use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)**
+
+See [final-project.Rmd](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/final-project.Rmd)
 
 ### References
 
