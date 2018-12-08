@@ -43,15 +43,15 @@ library(stringr)      # for working with strings replacement
 ``` 
 
 ```{r}
-source("assignment/functions.R")
+source("functions.R")
 ```
 
 ```{r}
-load(file.path(clean_data_dir, "assignment/def_clean_df.Rdata")) # same as def_clean but without the geometry, just dataframe
+load(file.path(clean_data_dir, "def_clean_df.Rdata")) # same as def_clean but without the geometry, just dataframe
 
-load(file.path(clean_data_dir, "assignment/def_clean.Rdata"))
+load(file.path(clean_data_dir, "def_clean.Rdata"))
 
-load(file.path(clean_data_dir, "assignment/la_clean.Rdata"))
+load(file.path(clean_data_dir, "la_clean.Rdata"))
 
 gc(verbose = F) # free memory
 ```
