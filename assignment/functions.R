@@ -17,7 +17,7 @@ library(gridExtra)    # for organizing multiple plots
 # FUNCTIONS ------------------------------------------------------------------------------------------------------------------------------------------
 
 # UNZIP
-UnzipMultipleFolders <- function(zip.dir,
+unzip_multiple_folders <- function(zip.dir,
                                  zip.pattern  = ".zip",
                                  unzip.subdir = T) {
   # UNZIPS FOLDERS IN GIVEN DIRECTORY & >
@@ -63,12 +63,12 @@ UnzipMultipleFolders <- function(zip.dir,
 
 
 # UNIT CONVERSION
-convert.sqm.to.ha   <- 0.0001
+convert_sqm_to_ha   <- 0.0001
 
 # PROJ4STRINGs
-crs_SAD69longlatPre96BR <- "+proj=longlat +ellps=aust_SA +towgs84=-66.8700,4.3700,-38.5200,0.0,0.0,0.0,0.0 +no_defs"
+crs_sad69longlatpre96br <- "+proj=longlat +ellps=aust_SA +towgs84=-66.8700,4.3700,-38.5200,0.0,0.0,0.0,0.0 +no_defs"
 
-crs_SIRGAS2000albers <- "+proj=aea +lat_1=-2 +lat_2=-22 +lat_0=-12 +lon_0=-54 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs"
+crs_sirgas2000albers <- "+proj=aea +lat_1=-2 +lat_2=-22 +lat_0=-12 +lon_0=-54 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs"
 
 # DIRECTORIES
 clean_data_dir <- "data_clean"
