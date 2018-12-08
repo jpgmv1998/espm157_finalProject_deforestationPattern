@@ -2,13 +2,16 @@
 title: 'Anti-Deforestation Policies and Changes in the Clearings Pattern: Brazilian
   Amazon Case'
 author: "Joao Pedro Vieira"
-date: "November 25, 2018"
+date: "December 9, 2018"
 output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(cache = FALSE, warning = F, message = F)
 ```
+
+ Following [Rosa et al. (2012)](https://doi.org/10.1111/j.1523-1739.2012.01901.x) and [Assunção et al. (2017)](https://doi.org/10.1016/j.landusepol.2017.04.022), I am going to analyze how the deforestation pattern changed from 2002 through 2014 in the Legal Amazon. I will focus on three main elements: the trends of the deforestation by polygon size, the heterogeneity across state patterns, and the spatial distribution of the polygons over time. In 2004, the Brazilian Government implemented a satellite-based system that provides near-real-time alerts of deforestation (DETER) to inform law enforcement operations against illegal deforestation of tropical forest in the Amazon. However, this system can only detect clearings of a contiguous area bigger than 25 ha, so patches below this threshold are invisible to DETER and this information is public. Thus, the hypothesis is that DETER created an incentive to deforesters strategically adapt their behavior to deforest in small patches and thus impacted the distribution of the polygons size. Also, in 2008, there was a second turning point on conservation policies with the creation of a blacklist that allowed law enforcement to better target their efforts on municipalities with high rates of recent deforestation. Identifying a causal relationship between these policies changes and the deforestation trends is out of the scope of this report, what we are aiming to show here is a descriptive analysis of the deforestation pattern, considering time, state, and cleared patch size variation.
+
 
 
 ### Loading Libraries
@@ -22,8 +25,9 @@ library(gridExtra)    # for organizing multiple plots
 library(stringr)      # for working with strings replacement
 ``` 
 
-### Functions (create separate file and source it)
+### Functions 
 
+The function used in this analysis are stored in (https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/functions.R) an R script repository
 ```{r}
 source("functions.R")
 ```
@@ -32,8 +36,18 @@ source("functions.R")
 
 ### Data Download
 
+We will use the following spatial data (shapefiles):
+
+**1. Annual Deforestation Polygons [2002-2014]**
+**2. Legal Amazon and State Boundaries** 
+
 ```{r}
-# 
+# To avoid Travis from timing out and to allow a faster way to run this code I saved the necessary data >
+# after the downloading and cleaning and uploaded to GitHUb >
+# (https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/tag/data) >
+# but for reproducibility purporses I kept all the necessary code here but their evaluation >
+# are conditioned to the non-existence of the data_clean folder which is created in this chunk. >
+# If you want to reproduce from scratch it is necessary to toggle of this chunk.
 if (!dir.exists(paths = clean_data_dir)) {
   # set url
   clean_data_url_index <- "https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/download/data/data_clean.zip"
@@ -417,7 +431,7 @@ rm(def_clean_df)
 ```{r fig.height = 20}
 
 year_initial <- list(2002, 2005, 2010)
-year_final <- list(2004, 2009, 2014)
+year_final   <- list(2004, 2009, 2014)
 
 list_maps <- map2(.x = year_initial, .y = year_final, map_polyg_distrib)
 

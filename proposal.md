@@ -13,10 +13,10 @@
 
 1. Deforestation polygons - Source: INPE (<http://www.dpi.inpe.br/prodesdigital/dadosn/2014>)
 
-It contains the annual deforestation series of the Brazilian Amazon. Multiple shapefiles, one for each Landsat mosaic scene in each year.
+It contains the annual deforestation series of the Brazilian Amazon. Multiple shapefiles, one for each Landsat mosaic scene.
 
 We use the 2014 file because we can recover all the previous year information from this mask.
-The shapefiles contains polygons of other land cover categories besides deforestation, like forest and hydrography, that won't be used in this analysis.
+The shapefiles contains polygons of other land cover categories besides deforestation  that won't be used in this analysis, like forest and hydrography.
 
 Relevant information: year of deforestation, spatial location and polygon category.  
 
