@@ -459,7 +459,7 @@ rm(def_clean_df)
 year_initial <- list(2002, 2005, 2010)
 year_final   <- list(2004, 2009, 2014)
 
-list_maps <- map2(.x = year_initial, .y = year_final, map_polyg_distrib)
+list_maps <- map2(.x = year_initial, .y = year_final, map_polyg_distrib, data_clean = data_clean, la_clean = la_clean)
 
 grid.arrange(list_maps[[1]], list_maps[[2]], list_maps[[3]], ncol = 1)
 
