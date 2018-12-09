@@ -68,23 +68,43 @@ CRS: LongLat (coordinate system), WGS84 (datum), not projected
 3) Analyze Spatial Distribution of the Deforestation by the size of cleared patch - inspired by figure 4.
 
 
-### Project questions will illustrate all of the following tasks:
+### Project questions will illustrate all of the following tasks: (code lines in parenthesis - approximately)
 
 - Some form of data access / reading into R
+
+Use of `st_read` (153 and 199), `load` (220-224)
+
 - Data tidying preparation
+
+Use of multiple `tidyr`, `stringr`, `dplyr` verbs for data tidying preparation.
+
 - Initial data visualization
+
+See [Map of Legal Amazon - State Boundaries](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/final-project_files/figure-markdown_github/la_states-1.png) (356-363)
+
 - Use of GitHub
+
+See https://github.com/espm-157/final-project-individual-option-jpgmv1998
+
 - Reproducible execution with use of Travis
+
+See https://travis-ci.com/espm-157/final-project-individual-option-jpgmv1998
+
 - RMarkdown writeup, with final submission as a nicely formatted PDF document that includes code and results.
+
+See https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/final-project.md
+
 - Overall clean and clear presentation of repository, code, and explanations.
+
+See https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/README.md
 
 ### and include the following skills: 
 
 - **Use of `dplyr` verbs / functions**
 
-Verbs used: Multipe Linwa
+Verbs used: (Multiple Lines)
 
-1) `filter`
+1) `filter` 
 2) `group_by`
 3) `mutate`
 4) `summarise`
@@ -127,23 +147,3 @@ See [final-project.Rmd](https://github.com/espm-157/final-project-individual-opt
 Assunção, Juliano, Clarissa Gandour, Pedro Pessoa, and Romero Rocha. "Property-level assessment of change in forest clearing patterns: The need for tailoring policy in the Amazon." Land Use Policy 66 (2017): 18-27.(<https://doi.org/10.1016/j.landusepol.2017.04.022>)
 
 Rosa, Isabel MD, Carlos Souza Jr, and Robert M. Ewers. "Changes in size of deforested patches in the Brazilian Amazon." Conservation Biology 26, no. 5 (2012): 932-937.(<https://doi.org/10.1111/j.1523-1739.2012.01901.x>)
-
-
-# Final Rubric 30 pts total
-
- - 5pts Proposal, turned in on time and with team member names, background, dataset, and 3 potential questions.
-
- - 10pts Polished github repository, including:
-	 -  3pt updated readme with functional travis badge 
-	 -  2pt passing travis build 
-	 -  2pt clean and well formatted output document (html, pdf, or md with associated files). 
-	 -  3pt enough supporting text that we can easily understand the project undertaken.
-	 
- - 15 pts Project Substance: Objectives, Code, Visualization. Do you meet all of the required project objectives and at least 3 of the supplementary objectives.
-	 - 15pts: exceptional
-	 - 13pts: adequate and complete
-	 - 11pts: adequate 2 questions, meeting 3 supplementary objectives
-	 - 9pts: adequate 2 q, meeting 1-2 supplementary objectives
-	 - 7pts: adequate 1 q, meeting 3 supplementary objectives
-	 - 5pts: adequate 1q, meeting 1-2 supplementary objectives
-

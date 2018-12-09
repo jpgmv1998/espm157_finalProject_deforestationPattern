@@ -222,7 +222,9 @@ load(file.path(clean_data_dir, "def_clean_df.Rdata")) # same as def_clean but wi
 load(file.path(clean_data_dir, "def_clean.Rdata"))
 
 load(file.path(clean_data_dir, "la_clean.Rdata"))
+```
 
+```{r include = F}
 gc(verbose = F) # free memory
 ```
 
@@ -260,7 +262,9 @@ ggplot(aes(x = prodes_year_increment, y = def, fill = size)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
+```
 
+```{r include = F}
 gc(verbose = F) # free memory
 ```
 
@@ -329,7 +333,9 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
 
 grid.arrange(panel_a, panel_b, ncol = 1)
+```
 
+```{r include = F}
 rm(panel_a, panel_b) # remove unnecessary objects
 gc(verbose = F) # free memory
 ```
@@ -354,7 +360,9 @@ cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>%
   geom_text(aes(X, Y, label = state_uf), size = 5) +
   labs(x = "Lon", y = "Lat", title = "Map of Legal Amazon - State Boundaries") +
   theme_bw()
+```
 
+```{r include = F}
 gc(verbose = F) # free memory
 ```
 
@@ -388,7 +396,9 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
   facet_wrap(. ~ state_uf, ncol = 2, scales = "free") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom", strip.background = element_rect(fill = NA))
+```
 
+```{r include = F}
 gc(verbose = F) # free memory
 ```
 
@@ -425,7 +435,9 @@ ggplot() +
         axis.line = element_blank(), axis.ticks = element_blank(),
         axis.title = element_blank(), axis.text = element_blank(),
         legend.position = "bottom", legend.key.width = unit(4, "cm"))
+```
 
+```{r include = F}
 gc(verbose = F) # free memory
 ```
 
@@ -455,7 +467,9 @@ ggplot() +
         axis.line = element_blank(), axis.ticks = element_blank(),
         axis.title = element_blank(), axis.text = element_blank(),
         legend.position = "bottom", legend.key.width = unit(4, "cm"))
+```
 
+```{r include = F}
 gc(verbose = F) # free memory
 rm(def_clean_df)
 ```
@@ -473,9 +487,9 @@ Finally, we want to take advantage that we have spatial data at the polygon leve
 
 ```{r polyg_distrib, fig.height = 20, out.width="100%"}
 if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png")) {
-  
+
   knitr::include_graphics("final-project_files/figure-markdown_github/polyg_distrib-1.png")
-  
+
 } else {
 
    map_1 <-
@@ -501,8 +515,7 @@ if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png"
           axis.line = element_blank(), axis.ticks = element_blank(),
           axis.title = element_blank(), axis.text = element_blank(),
           legend.position = "bottom")
-  
-  
+
    map_2 <-
     def_clean %>%
     filter(prodes_year_increment >= 2005 & prodes_year_increment <= 2009) %>%
@@ -526,8 +539,7 @@ if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png"
           axis.line = element_blank(), axis.ticks = element_blank(),
           axis.title = element_blank(), axis.text = element_blank(),
           legend.position = "bottom")
-   
-   
+
    map_3 <-
     def_clean %>%
     filter(prodes_year_increment >= 2010 & prodes_year_increment <= 2014) %>%
@@ -551,12 +563,13 @@ if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png"
           axis.line = element_blank(), axis.ticks = element_blank(),
           axis.title = element_blank(), axis.text = element_blank(),
           legend.position = "bottom")
-  
+
   grid.arrange(map_1, map_2, map_3, ncol = 1)
-  
+
 }
+```
 
-
+```{r include = F}
 rm(def_clean, la_clean)
 gc(verbose = F) # free memory
 ```
@@ -570,8 +583,5 @@ gc(verbose = F) # free memory
 
 [Rosa, Isabel MD, Carlos Souza Jr, and Robert M. Ewers. "Changes in size of deforested patches in the Brazilian Amazon." Conservation Biology 26, no. 5 (2012): 932-937.](https://doi.org/10.1111/j.1523-1739.2012.01901.x)
 
-```{r}
-# use of lintr to adjust style
-# lintr::lint("final-project.Rmd")
-```
+
 
