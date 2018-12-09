@@ -1,9 +1,9 @@
 Anti-Deforestation Policies and Changes in the Clearings Pattern: Brazilian Amazon Case
 ================
 Joao Pedro Vieira
-December 9, 2018
+December 10, 2018
 
-Following [Rosa et al. (2012)](https://doi.org/10.1111/j.1523-1739.2012.01901.x) and [Assunção et al. (2017)](https://doi.org/10.1016/j.landusepol.2017.04.022), I am going to analyze how the deforestation pattern changed from 2002 through 2014 in the Legal Amazon. I will focus on three main elements: the trends of the deforestation by polygon size, the heterogeneity across state patterns, and the spatial distribution of the polygons over time. In 2004, the Brazilian Government implemented a satellite-based system that provides near-real-time alerts of deforestation (DETER) to inform law enforcement operations against illegal deforestation of tropical forest in the Amazon. However, this system can only detect clearings of a contiguous area bigger than 25 ha, so patches below this threshold are invisible to DETER and this information is public. Thus, the hypothesis is that DETER created an incentive to deforesters strategically adapt their behavior to deforest in small patches and thus impacted the distribution of the polygons size. Also, in 2008, there was a second turning point on conservation policies with the creation of a blacklist that allowed law enforcement to better target their efforts on municipalities with high rates of recent deforestation. Identifying a causal relationship between these policies changes and the deforestation trends is out of the scope of this report, what we are aiming to show here is a descriptive analysis of the deforestation pattern, considering time, state, and cleared patch size variation.
+Following [Rosa et al. (2012)](https://doi.org/10.1111/j.1523-1739.2012.01901.x) and [Assunção et al. (2017)](https://doi.org/10.1016/j.landusepol.2017.04.022), I am going to analyze how the deforestation pattern changed from 2002 through 2014 in the Legal Amazon. I will focus on three main elements: the trends of the deforestation by polygon size, the heterogeneity across state patterns, and the spatial distribution of the polygons over time. In 2004, the Brazilian Government implemented a satellite-based system that provides near-real-time alerts of deforestation (DETER) to inform law enforcement operations against illegal deforestation of tropical forest in the Amazon. However, this system can only detect clearings of a contiguous area bigger than 25 ha, so patches below this threshold are invisible to DETER and this information is public. Thus, the hypothesis is that DETER created an incentive to deforesters strategically adapt their behavior to deforest in small patches and therefore impacted the distribution of the polygons size. Also, in 2008, there was a second turning point on conservation policies with the creation of a blacklist that allowed law enforcement to better target their efforts on municipalities with high rates of recent deforestation. Identifying a causal relationship between these policies changes and the deforestation trends is out of the scope of this report, what we are aiming to show here is a descriptive analysis of the deforestation pattern, considering time, state, and cleared patch size variation.
 
 We will use the following spatial data (shapefiles):
 
@@ -17,7 +17,7 @@ CRS: LongLat (coordinate system), SAD69\_pre96\_BRonly (datum), not projected
 
 **2. [Legal Amazon and State Boundaries](http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip)**
 
-Shapefile with the Legal Amazon Limits and the State Boundaries. Legal Amazon is geopoltical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: (<https://en.wikipedia.org/wiki/Legal_Amazon>)
+Shapefile with the Legal Amazon Limits and the State Boundaries. Legal Amazon is geopolitical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: (<https://en.wikipedia.org/wiki/Legal_Amazon>)
 
 CRS: LongLat (coordinate system), WGS84 (datum), not projected
 
@@ -43,19 +43,19 @@ source("functions.R")
 
 ### Data Download
 
-The downloading and cleaning process are long so there are two options:
+The downloading and cleaning process is long, so there are two options:
 
 **1. Download the cleaned data directly from the project github** \[default\]
 
-**2. Download data from original source and follow the whole process**
+**2. Download data from the original source and follow the whole process**
 
-Both options are available on this script, but as default the first one will be used. The second one is entirely available just below this code chunk.
+Both options are available on this script, but as default, the first one will be used. The second one is entirely available just below this code chunk.
 
 ``` r
 # 1. Download the cleaned data directly from the project github [default]
 # To avoid Travis from timing out and to allow a faster way to run this code I saved the necessary data >
 # after the downloading and cleaning and uploaded to [GitHUb](https://github.com/espm-157/final-project-individual-option-jpgmv1998/releases/tag/data) >
-# but for reproducibility purporses I kept all the necessary code here but their evaluation >
+# but for reproducibility purposes I kept all the necessary code here but their evaluation >
 # are conditioned to the non-existence of the data_clean folder which is created in this chunk. >
 # If you want to reproduce from scratch it is necessary to toggle off this chunk.
 if (!dir.exists(paths = clean_data_dir)) {
@@ -210,13 +210,7 @@ load(file.path(clean_data_dir, "def_clean_df.Rdata")) # same as def_clean but wi
 load(file.path(clean_data_dir, "def_clean.Rdata"))
 
 load(file.path(clean_data_dir, "la_clean.Rdata"))
-
-gc(verbose = F) # free memory
 ```
-
-    ##             used  (Mb) gc trigger   (Mb)  max used  (Mb)
-    ## Ncells  11755976 627.9   17524161  935.9  11769783 628.6
-    ## Vcells 130792494 997.9  185747550 1417.2 130814648 998.1
 
 ### 1. Deforestation Trends by size of cleared patch
 
@@ -254,14 +248,6 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 ```
 
 ![](final-project_files/figure-markdown_github/def_trends_polyg_size_1-1.png)
-
-``` r
-gc(verbose = F) # free memory
-```
-
-    ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  11905131  635.9   17524161  935.9  13575838  725.1
-    ## Vcells 131096195 1000.2  222977060 1701.2 152201413 1161.3
 
 As we can see in both graphs above, there war sharp falls in the deforestation after both anti-deforestation policies turning points (2004 and 2008), however as pointed out by (Assunção et al. (2017)) it seems to have impacted more the large polygons, increasing the relevance of small polygons. Linking this descriptive evidence with the fact that the satellite-based monitoring system can only detect the large cleared patches and that this limitation was public information, there might be a strategic behavior adaptation by deforesters explaining it. Our plot is a reproduction of (Assunção et al. (2017)) graph, but expanding to include two more years. This inclusion doesn't change the overall interpretation, only shows that the levels are somewhat constant, with a small increase similar for both groups.
 
@@ -330,15 +316,6 @@ grid.arrange(panel_a, panel_b, ncol = 1)
 
 ![](final-project_files/figure-markdown_github/def_trends_polyg_size_2-1.png)
 
-``` r
-rm(panel_a, panel_b) # remove unnecessary objects
-gc(verbose = F) # free memory
-```
-
-    ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  11990292  640.4   17524161  935.9  15222285  813.0
-    ## Vcells 131265601 1001.5  222977060 1701.2 222970169 1701.2
-
 These plots allows us to explore the trends for more categories and also look at the shares and not only the nominal increment. In our reproduction we expand it to include 5 more years and use the size intervals based on (Assunção et al. (2017)) to separate the policy relevant category of (&lt;25ha). Looking at the shares we can see a sistematic increase in the share of small polygons (&lt;25 ha) until 2010, after that there is a decrease but remaining as the majority proportion. The share is calculated as the ratio of the deforestation generated by the polygon size category and the total deforestation, for each year.
 
 ### 2. State Heterogeneity
@@ -363,14 +340,6 @@ cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>%
 ```
 
 ![](final-project_files/figure-markdown_github/la_states-1.png)
-
-``` r
-gc(verbose = F) # free memory
-```
-
-    ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  11946461  638.1   17524161  935.9  15222285  813.0
-    ## Vcells 131256425 1001.5  222977060 1701.2 222970169 1701.2
 
 #### Plot of proportion of polygons by cleared patch through time by state.
 
@@ -404,14 +373,6 @@ panel.background = element_blank(), axis.line = element_line(colour = "black"), 
 ```
 
 ![](final-project_files/figure-markdown_github/la_states_polyg_prop_1-1.png)
-
-``` r
-gc(verbose = F) # free memory
-```
-
-    ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  12071836  644.8   17524161  935.9  17524161  935.9
-    ## Vcells 131421381 1002.7  222977060 1701.2 222970169 1701.2
 
 We see that there are states such as AC and AP with almost all the deforestation coming from small polygons, contrasting with states like MT were larger polygons are more relevant. As expected for most of the states, small polygons increased their relevance becoming the majority, yet the presence of other patterns supports the idea of tailored policy to adjust the polcies accordingly to the local pattern instead of treating the whole region as unique and uniform.
 
@@ -450,14 +411,6 @@ ggplot() +
 
 ![](final-project_files/figure-markdown_github/la_states_polyg_prop_2-1.png)
 
-``` r
-gc(verbose = F) # free memory
-```
-
-    ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  12005318  641.2   17524161  935.9  17524161  935.9
-    ## Vcells 132453943 1010.6  222977060 1701.2 222970169 1701.2
-
 #### Maps of the ratio of total deforestation and state area across years
 
 ``` r
@@ -486,18 +439,6 @@ ggplot() +
 ```
 
 ![](final-project_files/figure-markdown_github/la_states_def_prop-1.png)
-
-``` r
-gc(verbose = F) # free memory
-```
-
-    ##             used   (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells  12005261  641.2   17524161  935.9  17524161  935.9
-    ## Vcells 132452991 1010.6  222977060 1701.2 222970169 1701.2
-
-``` r
-rm(def_clean_df)
-```
 
 From these visualizations we can conclude that there are persistent differences across the states for any given year for both measures, even though there is a common trends of less total deforestation and more presence of small cleared patches.
 
@@ -595,16 +536,11 @@ if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png"
 
 <img src="final-project_files/figure-markdown_github/polyg_distrib-1.png" width="100%" />
 
-``` r
-rm(def_clean, la_clean)
-gc(verbose = F) # free memory
-```
-
-    ##           used (Mb) gc trigger   (Mb)  max used   (Mb)
-    ## Ncells 1164576 62.2   14019328  748.8  17524161  935.9
-    ## Vcells 3061492 23.4  178381648 1361.0 222970169 1701.2
+Looking at these three plots we can clearly identify the spatial persistence of the deforestation althoug it is becoming less dense. Also, small polygons, as expected in these type of map seems to be even more relevant because all the deforestation areas look like points at this scale. Moreover, we can identify some areas with intense deofrestation in their borders but much less inside it, some of these are the protected areas (indigenous lands, national parks, areas for sustainable use, are for strict protection) created by the government to block deforestation advances.
 
 ### Conclusion
+
+Summarizing, this report shows a descriptive analysis of the recent deforestation in the Legal Amazon, focusing on clearing patches heterogeneities, differences across states and the spatial distribution of the deforestation. We followed the work of Assunção et al. (2017) and Rosa et al. (2012), relating the descriptive analysis with possible policy implications. We replicate some of the findings of these studies, expanding their analysis to include more years (2002-2014) and mixing complementary elements from both of the. In general, we find that the deforestation rates had a sharp fall after 2004 and 2008 and then stabilized in more recent years. Also, the decrease was bigger for large polygons (above 25 hectars) than small polygons, we associate this difference due to the implementation of the DETER system that can only detect large polygons. This could indicate a strategic change of behavior from the deforesters, but establishing this causal link is out of the scope of this research. For the secon part, we explored state heterogeneity and find that there is a considerable variation that should be taken into acoount by policymakers. Lastly, we are able to indeitfy the persistence of the deforestation, happening in similar areas in very distinct time periods.
 
 ### References
 
