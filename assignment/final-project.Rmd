@@ -10,7 +10,12 @@ output: github_document
 knitr::opts_chunk$set(cache = FALSE, warning = F, message = F)
 ```
 
+
+### Background
+
  Following [Rosa et al. (2012)](https://doi.org/10.1111/j.1523-1739.2012.01901.x) and [Assunção et al. (2017)](https://doi.org/10.1016/j.landusepol.2017.04.022), I am going to analyze how the deforestation pattern changed from 2002 through 2014 in the Legal Amazon. I will focus on three main elements: the trends of the deforestation by polygon size, the heterogeneity across state patterns, and the spatial distribution of the polygons over time. In 2004, the Brazilian Government implemented a satellite-based system that provides near-real-time alerts of deforestation (DETER) to inform law enforcement operations against illegal deforestation of tropical forest in the Amazon. However, this system can only detect clearings of a contiguous area bigger than 25 ha, so patches below this threshold are invisible to DETER and this information is public. Thus, the hypothesis is that DETER created an incentive to deforesters strategically adapt their behavior to deforest in small patches and therefore impacted the distribution of the polygons size. Also, in 2008, there was a second turning point on conservation policies with the creation of a blacklist that allowed law enforcement to better target their efforts on municipalities with high rates of recent deforestation. Identifying a causal relationship between these policies changes and the deforestation trends is out of the scope of this report, what we are aiming to show here is a descriptive analysis of the deforestation pattern, considering time, state, and cleared patch size variation.
+
+### Data Sources
 
 We will use the following spatial data (shapefiles):
 
@@ -30,6 +35,62 @@ Shapefile with the Legal Amazon Limits and the State Boundaries. Legal Amazon is
 
 CRS: LongLat (coordinate system), WGS84 (datum), not projected 
 
+### Objectives
+
+We divided this project into three main parts:
+
+1. An overall analysis of the deforestation trends by polygon size in the Legal Amazon. 
+
+2. Analyze state heterogeneities, looking at deforestation trends by polygon size, maps showing the evolution of the relevance of small polygons to the total deforestation and the share of the state deforested area.
+
+3. Analyze the spatial distribution of the deforestation polygons by size in three distinct time periods, when deforestation was increasing, decreasing and fin stable.
+
+### Skills
+
+We used the following skills for this analysis (the verbs included in the list may not be exhaustive):
+
+1. **Use of `dplyr` verbs / functions**
+
+Verbs used: 
+
+1) `filter` 
+2) `group_by`
+3) `mutate`
+4) `summarise`
+5) `rename`
+6) `select`
+7) `ungroup`
+8) `right_join`
+9) `if_else`
+
+2. **Writing / working with custom R functions**
+
+See [function.R](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/functions.R) repository.
+
+- **Use of regular expressions**
+
+Use of `str_replace`, `grep`, `str_sub`. 
+
+- **Parsing extensible data formats (JSON, XML)**
+
+Use of `htmlParse`, `getNodeSet`, `xmlGetAttr`. Lines 102-112. Download of deforestation data.
+
+- **Use of spatial vector data (`sf` package) and visualization of spatial data**
+
+Use of `st_read`, `geom_sf`, `st_coordinates`, `st_centroid`, `st_transform`, `st_set_crs`, `st_area`, and `st_union`. 
+
+- **Expansion of ggplot functions (to include more than default characteristics)**
+
+Use of `scale_fill_manual`, `scale_x_continuous`, `scale_y_continuous`, many `theme` options, `labs`, `scale_x_discrete`, `facet_wrap`, and `scale_fill_distiller`. 
+
+- **Making layout and presentation into secondary output (e.g. .pdf, website) - should enhance presentation**
+
+See [final-project-concise-version.pdf](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/final-project-concise-version.pdf)
+
+- **use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)**
+
+See [final-project.Rmd](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/final-project.Rmd)
+
 
 ### Loading Libraries
 ```{r libraries, include= TRUE, message = F}
@@ -44,7 +105,7 @@ library(stringr)      # for working with strings replacement
 
 ### Functions 
 
-The function used in this analysis are stored in an [R script repository](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/functions.R)
+The functions used in this analysis are stored in [R script repository](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/functions.R)
 ```{r}
 source("functions.R")
 ```
