@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = F, include = T, message = F, warning = F, fig.align
 
 We will use the following spatial data (shapefiles):
 
-#### 2.1. [Annual Deforestation Polygons [2002-2014]](http://www.dpi.inpe.br/prodesdigital/dadosn/2014)**
+#### 2.1. [Annual Deforestation Polygons [2002-2014]](http://www.dpi.inpe.br/prodesdigital/dadosn/2014)
 
 It contains the annual deforestation series of the Brazilian Amazon. Multiple shapefiles, one for each Landsat mosaic scene.
 
@@ -30,7 +30,7 @@ The shapefiles contains polygons of other land cover categories besides deforest
 CRS: LongLat (coordinate system), SAD69_pre96_BRonly (datum), not projected 
 
 
-#### 2.2. [Legal Amazon and State Boundaries](http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip)** 
+#### 2.2. [Legal Amazon and State Boundaries](http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip) 
 
 Shapefile with the Legal Amazon Limits and the State Boundaries. Legal Amazon is geopoltical division of Brazil, includes the whole Brazilian Amazon Biome, part of the Cerrado and the Pantanal. More info about it: (https://en.wikipedia.org/wiki/Legal_Amazon)
 
