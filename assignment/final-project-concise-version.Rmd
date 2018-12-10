@@ -121,7 +121,6 @@ From these visualizations we can conclude that there are persistent differences 
 
 Finally, we want to take advantage that we have spatial data at the polygon level to observe the spatial distribution of the deforestation by polygon size in different time periods, first a period of fast increase in deforestation rate (2002-2004), then a period of fast decrease (2005-2009) and lastly a period of relative stabilization (2010-2014). Inspired by:
 
-
 ```{r , fig.cap="Distribution of deforested patches of different sizes in the Brazilian Amazon for periods of (a) rapidly increasing deforestation (2002 through 2004) and (b) rapidly decreasing deforestation (2005 through 2009).- (Rosa et al., 2012)", fig.pos = 'h!'}
 knitr::include_graphics("../images/deforestation_map_bySize_rosa_et_al_2012.png")
 ```
