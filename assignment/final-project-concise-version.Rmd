@@ -7,7 +7,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F, include = T, message = F, warning = F)
+knitr::opts_chunk$set(echo = F, include = T, message = F, warning = F, fig.pos = "h!")
 ```
 
 ```{r include = FALSE}
@@ -79,6 +79,7 @@ For starters we do a exploratory plot, to show the Legal Amazon region and its s
 ```{r }
 knitr::include_graphics("final-project_files/figure-markdown_github/la_states-1.png")
 ```
+
 #### Plot of proportion of polygons by cleared patch through time by state.
 
 For a complete notion of what's happening in each state we plot the proportion of the 4 sizes categories for each year.
@@ -94,7 +95,7 @@ We see that there are states such as AC and AP with almost all the deforestation
 
 To complement the last plot we also focus only on the share of small polygons and the share of the State Deforested area to have a better visualization of the state-differences in each year.
 ```{r }
-knitr::include_graphics("final-project_files/figure-markdown_github/la_states_polyg_prop_1-1.png")
+knitr::include_graphics("final-project_files/figure-markdown_github/la_states_polyg_prop_2-1.png")
 ```
 
 ```{r }
