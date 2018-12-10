@@ -280,9 +280,9 @@ if (!dir.exists(paths = clean_data_dir)) {
 ```{r}
 load(file.path(clean_data_dir, "def_clean_df.Rdata")) # same as def_clean but without the geometry, just dataframe
 
-load(file.path(clean_data_dir, "def_clean.Rdata"))
+load(file.path(clean_data_dir, "def_clean.Rdata")) # sf object, deforestation time series
 
-load(file.path(clean_data_dir, "la_clean.Rdata"))
+load(file.path(clean_data_dir, "la_clean.Rdata")) # sf object, legal amazon state boundaries
 ```
 
 ```{r include = F}
@@ -298,30 +298,22 @@ First of all, we are going to explore the evolution of the deforestation across 
 ![](../images/deforestation_increment_sizes.png)
 ```{r def_trends_polyg_size_1}
 def_clean_df %>%
-  group_by(prodes_year_increment) %>%
-  filter(prodes_year_increment >= 2002) %>%
-  mutate(size = if_else(area < 25, "small", "large")) %>%
-  group_by(state_uf, prodes_year_increment, size) %>%
-  summarise(area_bysize = sum(area)) %>%
-  spread(key = size, value = area_bysize) %>%
-  replace_na(list(large = 0, small = 0)) %>%
-  rename(def_large = large, def_small = small) %>%
-  mutate(def_total = def_large + def_small) %>%
-  group_by(prodes_year_increment) %>%
-  summarise(sum_def_large = sum(def_large, na.rm = T) / 100000, sum_def_small = sum(def_small, na.rm = T) / 100000) %>%
-  gather(key = "size", value = "def", -prodes_year_increment) %>%
+  filter(prodes_year_increment >= 2002) %>% # keep just [2002-2014] time period
+  mutate(size = if_else(area < 25, "small", "large")) %>% # classify polygons by their size
+  group_by(prodes_year_increment, size) %>%
+  summarise(area_bysize = sum(area) / 100000) %>% # calculate area by size by year
 
-ggplot(aes(x = prodes_year_increment, y = def, fill = size)) +
-  geom_area() +
-  scale_fill_manual(name = "Polygon Size", labels = c("Large (>25ha)", "Small (<25ha)"), values = c("coral1", "lightblue")) +
-  labs(x = "Year",
+ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
+  geom_area() + # plot stacked areas of deforestation rate by size by year
+  scale_fill_manual(name = "Polygon Size", labels = c("Large (>25ha)", "Small (<25ha)"), values = c("coral1", "lightblue")) + # adjust legend and colors
+  labs(x = "Year", # adjust labels, title and notes
        y = "Deforestation Increment (100,000 ha)",
        title = "Deforestation Trends by Polygon Size",
        subtitle = "Inspired by Fig. 1 (Assunção et al., 2017) ",
        caption = "Notes: Reproducing Fig.1 from Assunção et al. (2017) expanding time period to include 2 more years.\n The figure illustrates annual Brazilian Amazon deforestation increment decomposed by size of cleared forest patch") +
-  scale_x_continuous(breaks = c(2002:2014), expand = c(0, 0), limits = c(2002, 2014.2)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+  scale_x_continuous(breaks = c(2002:2014), expand = c(0, 0), limits = c(2002, 2014.2)) + # adjust x-axis ticks
+  scale_y_continuous(expand = c(0, 0)) + # start graph from the origin
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), # more cleaner theme
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
 ```
 
@@ -337,24 +329,31 @@ For completeness we also reproduce:
 <br>
 ![](../images/deforestation_rate_percentage_byYear_bySize_rosa_et_al_2012.png)
 
+Tidying data for plots
+```{r}
+def_tidy <- 
+  def_clean_df %>%
+  filter(prodes_year_increment >= 2002) %>% # filter time period
+  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>% # create multiple size categories
+  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
+  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
+  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
+  group_by(state_uf, prodes_year_increment, size) %>%
+  summarise(area_bysize = sum(area)) %>% # calculate total are by size by year
+  ungroup() %>%
+  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>% # transform size groups to factor, select desired order of levels
+  mutate(prodes_year_increment = as.factor(prodes_year_increment)) # transform years to factor
+```
+
+
 ```{r def_trends_polyg_size_2, fig.height = 10}
 panel_a <-
-def_clean_df %>%
-group_by(prodes_year_increment) %>%
-filter(prodes_year_increment >= 2002) %>%
-mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
-mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
-mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
-mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
-group_by(state_uf, prodes_year_increment, size) %>%
-summarise(area_bysize = sum(area)) %>%
-ungroup() %>%
-mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
-mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>%
 
-ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
-  geom_bar(aes(fill = size), stat = "identity", position = "fill") +
-  scale_fill_manual(name = "Polygon Size", values = brewer.pal(n = 6, name = "Greys")[2:6]) +
+  def_tidy %>% 
+
+  ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
+  geom_bar(aes(fill = size), stat = "identity", position = "fill") + # create bars of shares by size
+  scale_fill_manual(name = "Polygon Size", values = brewer.pal(n = 6, name = "Greys")[2:6]) + # adjust color palette
   labs(x = "Year",
        y = "Deforestation Share",
        title = "Deforestation Trends by Polygon Size",
@@ -366,22 +365,11 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
 
 panel_b <-
-def_clean_df %>%
-group_by(prodes_year_increment) %>%
-filter(prodes_year_increment >= 2002) %>%
-mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
-mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
-mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
-mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
-group_by(state_uf, prodes_year_increment, size) %>%
-summarise(area_bysize = sum(area)) %>%
-ungroup() %>%
-mutate(area_bysize = area_bysize / 10000) %>%
-mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
-mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>%
+  def_tidy %>% 
+  mutate(area_bysize = area_bysize / 10000) %>% 
 
-ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
-  geom_bar(position = "stack", stat = "identity") +
+  ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
+  geom_bar(position = "stack", stat = "identity") + # create bar with stacked deforestation rates by size by year
   scale_fill_manual(name = "Polygon Size", values = brewer.pal(n = 6, name = "Greys")[2:6]) +
   labs(x = "Year",
        y = "Deforestation rate (10,000 ha/yr)",
@@ -393,7 +381,7 @@ ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
 
-grid.arrange(panel_a, panel_b, ncol = 1)
+grid.arrange(panel_a, panel_b, ncol = 1) # arrange both plots into one
 ```
 
 ```{r include = F}
@@ -415,12 +403,12 @@ In this case, we cannot reproduce the content of Fig. 3 entirely because we do n
 
 For starters we do a exploratory plot, to show the Legal Amazon region and its states.
 ```{r la_states}
-cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>%
+cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>% # create centroid info to include state UFs
   ggplot() +
-  geom_sf(fill = NA) +
-  geom_text(aes(X, Y, label = state_uf), size = 5) +
+  geom_sf(fill = NA) + # plot legal amazon state boundaries
+  geom_text(aes(X, Y, label = state_uf), size = 5) + # incldue state uf
   labs(x = "Lon", y = "Lat", title = "Map of Legal Amazon - State Boundaries") +
-  theme_bw()
+  theme_bw() # pre-existent theme
 ```
 
 ```{r include = F}
@@ -433,20 +421,9 @@ gc(verbose = F) # free memory
 
 For a complete notion of what's happening in each state we plot the proportion of the 4 sizes categories for each year.
 ```{r la_states_polyg_prop_1, fig.height=12, fig.width=10}
-def_clean_df %>%
-  group_by(prodes_year_increment) %>%
-  filter(prodes_year_increment >= 2002) %>%
-  mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>%
-  mutate(size = if_else(area >= 25 & area < 100, "25-100 ha", size)) %>%
-  mutate(size = if_else(area >= 100 & area < 500, "100-500 ha", size)) %>%
-  mutate(size = if_else(area >= 500, "> 500 ha", size)) %>%
-  group_by(state_uf, prodes_year_increment, size) %>%
-  summarise(area_bysize = sum(area)) %>%
-  ungroup() %>%
-  mutate(prodes_year_increment = as.factor(prodes_year_increment)) %>%
-  mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+def_tidy %>% 
 
-ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
+  ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
   geom_bar(aes(fill = size), stat = "identity", position = "fill") +
   scale_fill_manual(name = "Polygon Size", values = brewer.pal(n = 6, name = "Greys")[2:6]) +
   ylab("Share Polygon Size") +
@@ -480,16 +457,15 @@ def_clean_df %>%
   replace_na(list(large = 0, small = 0)) %>%
   rename(def_large = large, def_small = small) %>%
   mutate(def_total = def_large + def_small) %>%
-  mutate(share_def_small = def_small / def_total) %>%
-  right_join(la_clean) %>%
+  mutate(share_def_small = def_small / def_total) %>% # calculate share of small polygons
+  right_join(la_clean) %>% # join with sf to recover spatial info
 
-ggplot() +
-
-  geom_sf(aes(fill = share_def_small)) +
-  facet_wrap(. ~ prodes_year_increment, ncol = 4) +
+  ggplot() +
+  geom_sf(aes(fill = share_def_small)) + # plot la states with share small polygon def info
+  facet_wrap(. ~ prodes_year_increment, ncol = 4) + # separate maps by year
   scale_fill_distiller(type = "seq", palette = "YlOrRd", direction = 1, name = "Share Small Polygon Deforestation") +
   ggtitle("Small Polygon Relevance over time by state") +
-  theme(panel.grid.major = element_line(colour = "White"),
+  theme(panel.grid.major = element_line(colour = "White"), # multiple theme adjustments to make it more clean
         panel.grid.minor = element_line(colour = "white"),
         panel.background = element_blank(),
         strip.background = element_rect(fill = NA),
@@ -511,9 +487,9 @@ def_clean_df %>%
   filter(prodes_year_increment >= 2002) %>%
   group_by(state_uf, prodes_year_increment) %>%
   summarise(area_def = sum(area)) %>%
-  replace_na(area_def = 0) %>%
-  right_join(la_clean) %>%
-  mutate(share_def = area_def / area) %>%
+  replace_na(area_def = 0) %>% # replace NAs by 0s
+  right_join(la_clean) %>% # recover spatial info
+  mutate(share_def = area_def / area) %>% # calculate share of the state area that is deforested
 
 ggplot() +
 
@@ -565,6 +541,7 @@ if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png"
     st_simplify() %>%
     ungroup() %>%
     mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+
     ggplot() +
     geom_sf(aes(col = size, fill = size), size = 1.05) +
     geom_sf(data = la_clean, fill = NA) +
@@ -589,6 +566,7 @@ if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png"
     st_simplify() %>%
     ungroup() %>%
     mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+
     ggplot() +
     geom_sf(aes(col = size, fill = size), size = 1.05) +
     geom_sf(data = la_clean, fill = NA) +
@@ -613,6 +591,7 @@ if (file.exists("final-project_files/figure-markdown_github/polyg_distrib-1.png"
     st_simplify() %>%
     ungroup() %>%
     mutate(size = factor(size, levels = c("> 500 ha", "100-500 ha", "25-100 ha", "<25 ha"))) %>%
+
     ggplot() +
     geom_sf(aes(col = size, fill = size), size = 1.05) +
     geom_sf(data = la_clean, fill = NA) +
