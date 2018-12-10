@@ -126,7 +126,7 @@ knitr::include_graphics("../images/deforestation_map_bySize_rosa_et_al_2012.png"
 ```
 
 
-```{r}
+```{r out.width = "100%"}
 knitr::include_graphics("final-project_files/figure-markdown_github/polyg_distrib-1.png")
 ```
 
