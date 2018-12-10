@@ -312,7 +312,7 @@ For completeness we also reproduce:
 Tidying data for plots
 
 ``` r
-def_tidy <- 
+def_tidy <-
   def_clean_df %>%
   filter(prodes_year_increment >= 2002) %>% # filter time period
   mutate(size = if_else(area < 25, "<25 ha", as.character(NA))) %>% # create multiple size categories
@@ -329,7 +329,7 @@ def_tidy <-
 ``` r
 panel_a <-
 
-  def_tidy %>% 
+  def_tidy %>%
 
   ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
   geom_bar(aes(fill = size), stat = "identity", position = "fill") + # create bars of shares by size
@@ -345,8 +345,8 @@ panel_a <-
 panel.background = element_blank(), axis.line = element_line(colour = "black"), legend.position = "bottom")
 
 panel_b <-
-  def_tidy %>% 
-  mutate(area_bysize = area_bysize / 10000) %>% 
+  def_tidy %>%
+  mutate(area_bysize = area_bysize / 10000) %>%
 
   ggplot(aes(x = prodes_year_increment, y = area_bysize, fill = size)) +
   geom_bar(position = "stack", stat = "identity") + # create bar with stacked deforestation rates by size by year
@@ -396,7 +396,7 @@ cbind(la_clean, st_coordinates(st_centroid(la_clean))) %>% # create centroid inf
 For a complete notion of what's happening in each state we plot the proportion of the 4 sizes categories for each year.
 
 ``` r
-def_tidy %>% 
+def_tidy %>%
 
   ggplot(aes(x = prodes_year_increment, y = area_bysize)) +
   geom_bar(aes(fill = size), stat = "identity", position = "fill") +

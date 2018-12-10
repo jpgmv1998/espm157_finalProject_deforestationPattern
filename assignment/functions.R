@@ -40,7 +40,8 @@ unzip_multiple_folders <- function(zip.dir,
                          full.names = T)
 
   # unzip procedure
-  while (length(zip_list) > 0) {  # 'while' to enable recursive unzip
+  # 'while' to enable recursive unzip
+  while (length(zip_list) > 0) {
 
     for (zip_folder in zip_list) {
       unzip_dir <- str_replace(pattern     = zip.pattern,   # sets unzipped dir structure to mirror >
