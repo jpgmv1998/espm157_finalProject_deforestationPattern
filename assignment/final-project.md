@@ -79,8 +79,6 @@ See [final-project-concise-version.pdf](https://github.com/espm-157/final-projec
 
 -   **use lintr to clean code (checks adherence to a given style, syntax errors and possible semantic issues)**
 
-See [final-project.Rmd](https://github.com/espm-157/final-project-individual-option-jpgmv1998/blob/master/assignment/final-project.Rmd)
-
 ### Loading Libraries
 
 ``` r
@@ -144,21 +142,27 @@ if (!dir.exists(paths = clean_data_dir)) {
   raw_data_url_index <- "http://www.dpi.inpe.br/prodesdigital/dadosn/2014/"
   # directory setup
   raw_data_dir <- "data_input"
+
   # download of 2014 shapefile data
   # check existence of "data_input" folder
   if (!dir.exists(paths = raw_data_dir)) {
     dir.create(path  = raw_data_dir)
     print(paste0("***NOTE: directory ", raw_data_dir, " created."))
   }
+
   if (length(list.files(raw_data_dir)) == 0) {
     html_matched <- htmlParse(raw_data_url_index) %>%  # parses html string (splits into components)
     getNodeSet("//a") %>%  # finds nodes matching criterion "//a"
     map(xmlGetAttr, "href") %>%
     grep(pattern = "*_shp.zip", value = T)  # selects elements matching "*_shp.zip" (returns landsat mosaic scenes)
+
     raw_data_url_zipfiles <- paste(raw_data_url_index, html_matched,
                                    sep = "")
+
     dest_path <- file.path(raw_data_dir, html_matched)
+
     map2(raw_data_url_zipfiles, dest_path, function(x, y) download.file(x, y)) # name determined in 'html_matched'
+
     unzip_multiple_folders(zip.dir      = raw_data_dir,  # unzips downloaded data and deletes original compressed files
                          zip.pattern  = ".zip",
                          unzip.subdir = T)
@@ -175,7 +179,9 @@ if (!dir.exists(paths = clean_data_dir)) {
   # only download data if there is not a local copy
   if (!file.exists(file.path(raw_data_dir, "UF_AmLeg_LLwgs84"))) {
     raw_data_url_index_2 <- "http://www.dpi.inpe.br/amb_data/Shapefiles/UF_AmLeg_LLwgs84.zip" # set url
+
     download.file(url = raw_data_url_index_2, destfile = "data_input/UF_AmLeg_LLwgs84.zip") # download the shapefile
+
     unzip_multiple_folders(zip.dir      = raw_data_dir,    # unzips downloaded data and deletes original compressed files
                          zip.pattern  = ".zip",
                          unzip.subdir = T)
@@ -199,6 +205,7 @@ if (!dir.exists(paths = clean_data_dir)) {
     folder_name  <- list.files(raw_data_dir, pattern = "_shp") # create a list with all mosaic scene folders
     layer_name <- str_replace(pattern = "_shp", replacement = "__pol", string = folder_name) # layer name is very similar to the folder name
     complete_path <- file.path(raw_data_dir, folder_name, "2014")
+
     mosaic_scene <-
     map2(.x = complete_path, .y = layer_name, .f = st_read, quiet = T)
     def_clean <-
@@ -214,7 +221,8 @@ if (!dir.exists(paths = clean_data_dir)) {
     rename(state_uf = uf, prodes_class = mainclass, prodes_year_increment = ano) %>%  # adjust columns name
     select(polyg_id, state_uf, prodes_class, prodes_year_increment, area) # keep column of interest
 
-    rm(mosaic_scene)
+    rm(mosaic_scene) # free memory
+
     def_clean_df <- # create a version of the clean data with only data.frame information to have a light version of the data
       def_clean %>%
       st_set_geometry(NULL)
@@ -459,8 +467,7 @@ def_clean_df %>%
   right_join(la_clean) %>% # recover spatial info
   mutate(share_def = area_def / area) %>% # calculate share of the state area that is deforested
 
-ggplot() +
-
+  ggplot() +
   geom_sf(aes(fill = share_def)) +
   facet_wrap(. ~ prodes_year_increment, ncol = 4) +
   scale_fill_distiller(type = "seq", palette = "YlOrRd", direction = 1, name = "Share of State Deforested Area") +
